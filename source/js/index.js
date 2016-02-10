@@ -1,4 +1,4 @@
-let //Modernizr = require('Modernizr'),
+const //Modernizr = require('Modernizr'),
     WardDraw = require('./ward-draw/ward-draw.js'),
     canvas = document.getElementById('canvas');
 

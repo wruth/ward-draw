@@ -1,15 +1,25 @@
-let internal = require('../ward-lib/create-internal.js').createInternal(),
+const internal = require('../ward-lib/create-internal.js').createInternal(),
     Point = require('../ward-lib/graphics/point.js'),
     Size = require('../ward-lib/graphics/size.js'),
     Rect = require('../ward-lib/graphics/rect.js');
 
-function _redraw() {
-    let properties = internal(this),
-        ctx = properties.ctx,
-        size = properties.size,
-        halfSize = { width: size.width / 2, height: size.height / 2 };
 
-    ctx.clearRect(0, 0, size.width, size.height);
+//----------------------------------------------------------------------------------------------------------------------
+//
+// functions
+//
+//----------------------------------------------------------------------------------------------------------------------
+
+function drawRedSquare(ctx, rect) {
+    ctx.save();
+    ctx.fillStyle = 'red';
+    ctx.fillRect(rect.origin.x, rect.origin.y, rect.size.width, rect.size.height);
+    ctx.restore();
+}
+
+function drawBackground(ctx, size) {
+    const halfSize = { width: size.width / 2, height: size.height / 2 };
+
     ctx.save();
 
     ctx.fillStyle = 'black';
@@ -26,28 +36,38 @@ function _redraw() {
     ctx.stroke();
 
     ctx.restore();
+}
+
+
+//----------------------------------------------------------------------------------------------------------------------
+//
+// private methods
+//
+//----------------------------------------------------------------------------------------------------------------------
+
+function _redraw() {
+    const properties = internal(this),
+        ctx = properties.ctx,
+        size = properties.size;
+
+    ctx.clearRect(0, 0, size.width, size.height);
+
+    drawBackground(ctx, size);
 
     if (properties.dragRect) {
-        _drawRedSquare(ctx, properties.dragRect);
+        drawRedSquare(ctx, properties.dragRect);
     }
 }
 
 function _getMousePosition(evt) {
-    let canvas = internal(this).canvas,
+    const canvas = internal(this).canvas,
         rect = canvas.getBoundingClientRect();
 
     return new Point(evt.clientX - rect.left, evt.clientY - rect.top);
 }
 
-function _drawRedSquare(context, rect) {
-    context.save();
-    context.fillStyle = 'red';
-    context.fillRect(rect.origin.x, rect.origin.y, rect.size.width, rect.size.height);
-    context.restore();
-}
-
 function _setupHandlers() {
-    let properties = internal(this),
+    const properties = internal(this),
         canvas = properties.canvas;
 
     canvas.addEventListener('mousedown', _handleMouseDown.bind(this), false);
@@ -63,7 +83,7 @@ function _setupHandlers() {
 //----------------------------------------------------------------------------------------------------------------------
 
 function _handleMouseDown(evt) {
-    let properties = internal(this),
+    const properties = internal(this),
         canvas = properties.canvas;
 
     properties.mouseDownPoint = _getMousePosition.call(this, evt);
@@ -72,7 +92,7 @@ function _handleMouseDown(evt) {
 }
 
 function _handleMouseMove(evt) {
-    let properties = internal(this),
+    const properties = internal(this),
         mouseMovePoint = _getMousePosition.call(this, evt),
         size = new Size(mouseMovePoint.x - properties.mouseDownPoint.x, mouseMovePoint.y - properties.mouseDownPoint.y),
         rect = new Rect(properties.mouseDownPoint, size);
@@ -82,19 +102,24 @@ function _handleMouseMove(evt) {
 }
 
 function _handleMouseUp(evt) {
-    let properties = internal(this),
+    const properties = internal(this),
         canvas = properties.canvas;
 
     canvas.removeEventListener('mousemove', properties.handleMouseMove, false);
     canvas.removeEventListener('mouseup', properties.handleMouseUp, false);
-
     delete properties.mouseDownPoint;
     delete properties.dragRect;
 }
 
 
-let WardDraw = function (canvas, size) {
-    let properties = internal(this);
+//----------------------------------------------------------------------------------------------------------------------
+//
+// constructor
+//
+//----------------------------------------------------------------------------------------------------------------------
+
+const WardDraw = function (canvas, size) {
+    const properties = internal(this);
     canvas.width = size.width;
     canvas.height = size.height;
 
