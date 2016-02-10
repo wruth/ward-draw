@@ -1,7 +1,8 @@
 const internal = require('../ward-lib/create-internal.js').createInternal(),
     Point = require('../ward-lib/graphics/models/point.js'),
     Size = require('../ward-lib/graphics/models/size.js'),
-    Rect = require('../ward-lib/graphics/models/rect.js');
+    Rect = require('../ward-lib/graphics/models/rect.js'),
+    ContextProperties = require('./models/context-properties.js');
 
 
 //----------------------------------------------------------------------------------------------------------------------
@@ -111,13 +112,13 @@ function _handleMouseUp(evt) {
     delete properties.dragRect;
 }
 
-
-//----------------------------------------------------------------------------------------------------------------------
-//
-// constructor
-//
-//----------------------------------------------------------------------------------------------------------------------
-
+/**
+ * WardDraw
+ *
+ * @constructor
+ * @param {Canvas} canvas a Canvas instance
+ * @param {Size} size a Size instance
+ */
 const WardDraw = function (canvas, size) {
     const properties = internal(this);
     canvas.width = size.width;
@@ -126,9 +127,21 @@ const WardDraw = function (canvas, size) {
     properties.canvas = canvas;
     properties.size = size;
     properties.ctx = canvas.getContext('2d');
+    properties.contextProperties = new ContextProperties();
 
     _setupHandlers.call(this);
     _redraw.call(this);
+};
+
+
+//----------------------------------------------------------------------------------------------------------------------
+//
+// public methods
+//
+//----------------------------------------------------------------------------------------------------------------------
+
+WardDraw.prototype.setContextProperty = function (key, value) {
+    internal(this).contextProperties.set(key, value);
 };
 
 module.exports = WardDraw;
