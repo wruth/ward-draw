@@ -1,7 +1,7 @@
 const internal = require('../ward-lib/create-internal.js').createInternal(),
-    Point = require('../ward-lib/graphics/point.js'),
-    Size = require('../ward-lib/graphics/size.js'),
-    Rect = require('../ward-lib/graphics/rect.js');
+    Point = require('../ward-lib/graphics/models/point.js'),
+    Size = require('../ward-lib/graphics/models/size.js'),
+    Rect = require('../ward-lib/graphics/models/rect.js');
 
 
 //----------------------------------------------------------------------------------------------------------------------
