@@ -4,7 +4,8 @@ const internal = require('../ward-lib/create-internal.js').createInternal(),
     Rect = require('../ward-lib/graphics/models/rect.js'),
     ContextProperties = require('./models/context-properties.js'),
     DisplayList = require('./display/display-list.js'),
-    DisplayListRenderer = require('./display/display-list-renderer.js');
+    DisplayListRenderer = require('./display/display-list-renderer.js'),
+    Shape = require('./display/shape.js');
 
 
 //----------------------------------------------------------------------------------------------------------------------
@@ -13,10 +14,10 @@ const internal = require('../ward-lib/create-internal.js').createInternal(),
 //
 //----------------------------------------------------------------------------------------------------------------------
 
-function drawRedSquare(ctx, rect) {
+function drawDragRect(ctx, rect) {
     ctx.save();
-    ctx.fillStyle = 'red';
-    ctx.fillRect(rect.origin.x, rect.origin.y, rect.size.width, rect.size.height);
+    ctx.strokeStyle = 'blue';
+    ctx.strokeRect(rect.origin.x, rect.origin.y, rect.size.width, rect.size.height);
     ctx.restore();
 }
 
@@ -51,14 +52,17 @@ function drawBackground(ctx, size) {
 function _redraw() {
     const properties = internal(this),
         ctx = properties.ctx,
-        size = properties.size;
+        size = properties.size,
+        displayList = properties.displayList,
+        displayListRenderer = properties.displayListRenderer;
 
     ctx.clearRect(0, 0, size.width, size.height);
 
     drawBackground(ctx, size);
+    displayListRenderer.renderList(displayList);
 
     if (properties.dragRect) {
-        drawRedSquare(ctx, properties.dragRect);
+        drawDragRect(ctx, properties.dragRect);
     }
 }
 
@@ -112,6 +116,7 @@ function _handleMouseUp(evt) {
     canvas.removeEventListener('mouseup', properties.handleMouseUp, false);
     delete properties.mouseDownPoint;
     delete properties.dragRect;
+    _redraw.call(this);
 }
 
 /**
@@ -130,6 +135,7 @@ const WardDraw = function (canvas, size) {
     properties.size = size;
     properties.ctx = canvas.getContext('2d');
     properties.contextProperties = new ContextProperties();
+    properties.displayList = new DisplayList();
     properties.displayListRenderer = new DisplayListRenderer(properties.ctx);
 
     _setupHandlers.call(this);
