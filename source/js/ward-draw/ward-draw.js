@@ -2,7 +2,9 @@ const internal = require('../ward-lib/create-internal.js').createInternal(),
     Point = require('../ward-lib/graphics/models/point.js'),
     Size = require('../ward-lib/graphics/models/size.js'),
     Rect = require('../ward-lib/graphics/models/rect.js'),
-    ContextProperties = require('./models/context-properties.js');
+    ContextProperties = require('./models/context-properties.js'),
+    DisplayList = require('./display/display-list.js'),
+    DisplayListRenderer = require('./display/display-list-renderer.js');
 
 
 //----------------------------------------------------------------------------------------------------------------------
@@ -128,6 +130,7 @@ const WardDraw = function (canvas, size) {
     properties.size = size;
     properties.ctx = canvas.getContext('2d');
     properties.contextProperties = new ContextProperties();
+    properties.displayListRenderer = new DisplayListRenderer(properties.ctx);
 
     _setupHandlers.call(this);
     _redraw.call(this);
