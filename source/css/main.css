@@ -1,5 +1,18 @@
 #canvas-wrapper {
     position: absolute;
-    top: 50px;
+    top: 100px;
     left: 50px;
 }
+
+#canvas {
+    float: left;
+}
+
+#tools {
+    float: left;
+}
+
+.tool {
+    display: block;
+}
+

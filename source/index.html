@@ -16,6 +16,23 @@
         <h1>WardDraw</h1>
         <div id="canvas-wrapper">
             <canvas id="canvas"></canvas>
+            <div id="tools">
+                <h4>Colors</h4>
+                <form name="colors">
+                    <label class="tool"><input type="radio" name="color" value="red">Red</label>
+                    <label class="tool"><input type="radio" name="color" value="yellow">Yellow</label>
+                    <label class="tool"><input type="radio" name="color" value="green">Green</label>
+                    <label class="tool"><input type="radio" name="color" value="blue">Blue</label>
+                </form>
+                <h4>Shapes</h4>
+                <form name="shapes">
+                    <label class="tool"><input type="radio" name="shape" value="createRectangles">Rectangle</label>
+                    <label class="tool"><input type="radio" name="shape" value="createEllipses">Ellipse</label>
+                </form>
+            </div>
+            <div>
+                <button id="remove-all">Remove All</button>
+            </div>
         </div>
     </body>
 

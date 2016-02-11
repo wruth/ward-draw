@@ -12,7 +12,7 @@ const Shape = function (bounds, path, contextProperties) {
 
 Shape.prototype.draw = function (ctx) {
     const properties = internal(this);
-    ctx.store();
+    ctx.save();
     ctx.setTransform.apply(ctx, properties.transform);
     properties.contextProperties.applyToContext(ctx);
     ctx.fill(properties.path);

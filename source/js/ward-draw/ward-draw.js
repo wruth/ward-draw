@@ -1,11 +1,17 @@
 const internal = require('../ward-lib/create-internal.js').createInternal(),
+    wardDrawConstants = require('./ward-draw-constants.js'),
     Point = require('../ward-lib/graphics/models/point.js'),
     Size = require('../ward-lib/graphics/models/size.js'),
     Rect = require('../ward-lib/graphics/models/rect.js'),
     ContextProperties = require('./models/context-properties.js'),
     DisplayList = require('./display/display-list.js'),
     DisplayListRenderer = require('./display/display-list-renderer.js'),
-    Shape = require('./display/shape.js');
+    createShape = require('./factories/shape-factory.js'),
+    shapeFactoryConstants = require('./factories/shape-factory-constants.js'),
+    modeToShapeMap = new Map([
+            [wardDrawConstants.MODE_CREATE_ELLIPSES, shapeFactoryConstants.TYPE_ELLIPSE],
+            [wardDrawConstants.MODE_CREATE_RECTANGLES, shapeFactoryConstants.TYPE_RECTANGLE]
+        ]);
 
 
 //----------------------------------------------------------------------------------------------------------------------
@@ -66,6 +72,18 @@ function _redraw() {
     }
 }
 
+function _addShape(bounds) {
+    const properties = internal(this);
+
+    try {
+        let shape = createShape(modeToShapeMap.get(properties.mode), bounds, properties.contextProperties.clone());
+        properties.displayList.addShape(shape);
+    } catch (err) {
+        console.log(err.message);
+    }
+
+}
+
 function _getMousePosition(evt) {
     const canvas = internal(this).canvas,
         rect = canvas.getBoundingClientRect();
@@ -114,6 +132,9 @@ function _handleMouseUp(evt) {
 
     canvas.removeEventListener('mousemove', properties.handleMouseMove, false);
     canvas.removeEventListener('mouseup', properties.handleMouseUp, false);
+
+    _addShape.call(this, properties.dragRect);
+
     delete properties.mouseDownPoint;
     delete properties.dragRect;
     _redraw.call(this);
@@ -137,6 +158,7 @@ const WardDraw = function (canvas, size) {
     properties.contextProperties = new ContextProperties();
     properties.displayList = new DisplayList();
     properties.displayListRenderer = new DisplayListRenderer(properties.ctx);
+    properties.mode = wardDrawConstants.MODE_CREATE_RECTANGLES;
 
     _setupHandlers.call(this);
     _redraw.call(this);
@@ -151,6 +173,15 @@ const WardDraw = function (canvas, size) {
 
 WardDraw.prototype.setContextProperty = function (key, value) {
     internal(this).contextProperties.set(key, value);
+};
+
+WardDraw.prototype.setMode = function (mode) {
+    internal(this).mode = mode;
+};
+
+WardDraw.prototype.removeAll = function () {
+    internal(this).displayList.removeAll();
+    _redraw.call(this);
 };
 
 module.exports = WardDraw;

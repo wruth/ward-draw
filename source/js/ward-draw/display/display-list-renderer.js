@@ -10,7 +10,7 @@ DisplayListRenderer.prototype.renderList = function (displayList) {
         listIterator = displayList.getIterator();
 
     for (let element = listIterator.next(); !element.done; element = listIterator.next()) {
-        ctx.store();
+        ctx.save();
         element.value.draw(ctx);
         ctx.restore();
     }
