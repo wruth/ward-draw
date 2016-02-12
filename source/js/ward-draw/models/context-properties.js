@@ -1,3 +1,5 @@
+'use strict';
+
 const internal = require('../../ward-lib/create-internal.js').createInternal(),
 
     validProperties = new Set([

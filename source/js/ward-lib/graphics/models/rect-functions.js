@@ -1,3 +1,5 @@
+'use strict';
+
 const Rect = require('./rect.js'),
     Size = require('./size.js'),
     Point = require('./point.js');

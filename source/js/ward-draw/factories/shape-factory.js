@@ -1,3 +1,5 @@
+'use strict';
+
 const rectFunctions = require('../../ward-lib/graphics/models/rect-functions.js'),
     constants = require('./shape-factory-constants.js'),
     Shape = require('../display/shape.js');

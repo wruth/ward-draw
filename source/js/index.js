@@ -1,5 +1,7 @@
+'use strict';
+
 const WardDraw = require('./ward-draw/ward-draw.js'),
-    constants = require('./ward-draw/ward-draw-constants.js');
+    es6Polyfills = require('./ward-lib/es6-polyfills.js');
 
 let wardDraw,
     colorRadios,
@@ -8,10 +10,10 @@ let wardDraw,
 
 function handleColorChange() {
 
-    for (let i = 0; i < colorRadios.length; i++) {
+    for (let radio of colorRadios) {
 
-        if (colorRadios[i].checked) {
-            wardDraw.setContextProperty('fillStyle', colorRadios[i].value);
+        if (radio.checked) {
+            wardDraw.setContextProperty('fillStyle', radio.value);
             break;
         }
     }
@@ -19,10 +21,10 @@ function handleColorChange() {
 
 function handleShapeChange() {
 
-    for (let i = 0; i < shapeRadios.length; i++) {
+    for (let radio of shapeRadios) {
 
-        if (shapeRadios[i].checked) {
-            wardDraw.setMode(shapeRadios[i].value);
+        if (radio.checked) {
+            wardDraw.setMode(radio.value);
             break;
         }
     }
@@ -35,12 +37,12 @@ function addHandlers() {
         wardDraw.removeAll();
     });
 
-    for (let i = 0; i < colorRadios.length; i++) {
-        colorRadios[i].addEventListener('change', handleColorChange);
+    for (let radio of colorRadios) {
+        radio.addEventListener('change', handleColorChange);
     }
 
-    for (let i = 0; i < shapeRadios.length; i++) {
-        shapeRadios[i].addEventListener('change', handleShapeChange);
+    for (let radio of shapeRadios) {
+        radio.addEventListener('change', handleShapeChange);
     }
 
 }

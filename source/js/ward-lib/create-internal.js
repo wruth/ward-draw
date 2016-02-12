@@ -1,3 +1,5 @@
+'use strict';
+
 /**
  * Factory method that effectively wraps a `WeakMap` instance, returning a function that is guaranteed to return a
  * property object for a given object key, creating the property object on the fly if necessary.

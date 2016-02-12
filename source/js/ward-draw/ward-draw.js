@@ -1,3 +1,5 @@
+'use strict';
+
 const internal = require('../ward-lib/create-internal.js').createInternal(),
     wardDrawConstants = require('./ward-draw-constants.js'),
     Point = require('../ward-lib/graphics/models/point.js'),
@@ -9,9 +11,9 @@ const internal = require('../ward-lib/create-internal.js').createInternal(),
     createShape = require('./factories/shape-factory.js'),
     shapeFactoryConstants = require('./factories/shape-factory-constants.js'),
     modeToShapeMap = new Map([
-            [wardDrawConstants.MODE_CREATE_ELLIPSES, shapeFactoryConstants.TYPE_ELLIPSE],
-            [wardDrawConstants.MODE_CREATE_RECTANGLES, shapeFactoryConstants.TYPE_RECTANGLE]
-        ]);
+        [wardDrawConstants.MODE_CREATE_ELLIPSES, shapeFactoryConstants.TYPE_ELLIPSE],
+        [wardDrawConstants.MODE_CREATE_RECTANGLES, shapeFactoryConstants.TYPE_RECTANGLE]
+    ]);
 
 
 //----------------------------------------------------------------------------------------------------------------------

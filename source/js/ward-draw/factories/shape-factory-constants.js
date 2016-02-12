@@ -1,3 +1,5 @@
+'use strict';
+
 const constants = {
     TYPE_RECTANGLE: 'rectangle',
     TYPE_ELLIPSE: 'ellipse',

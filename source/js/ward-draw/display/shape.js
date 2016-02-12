@@ -1,3 +1,5 @@
+'use strict';
+
 const internal = require('../../ward-lib/create-internal.js').createInternal();
 
 const Shape = function (bounds, path, contextProperties) {
