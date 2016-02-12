@@ -1,5 +1,6 @@
 #canvas-wrapper {
     position: absolute;
+    width: 650px;
     top: 100px;
     left: 50px;
 }
@@ -8,8 +9,9 @@
     float: left;
 }
 
-#tools {
+#toolbar {
     float: left;
+    margin-left: 10px;
 }
 
 .tool {
