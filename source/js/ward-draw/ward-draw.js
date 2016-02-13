@@ -8,6 +8,8 @@ const internal = require('../ward-lib/create-internal.js').createInternal(),
     ContextProperties = require('./models/context-properties.js'),
     DisplayList = require('./display/display-list.js'),
     DisplayListRenderer = require('./display/display-list-renderer.js'),
+    Shape = require('./display/shape.js'),
+    CompositeShape = require('./display/composite-shape.js'),
     createShape = require('./factories/shape-factory.js'),
     shapeFactoryConstants = require('./factories/shape-factory-constants.js'),
     modeToShapeMap = new Map([
@@ -29,25 +31,31 @@ function drawDragRect(ctx, rect) {
     ctx.restore();
 }
 
-function drawBackground(ctx, size) {
-    const halfSize = { width: size.width / 2, height: size.height / 2 };
+function createBackground(size) {
+    const halfSize = new Size(size.width / 2, size.height / 2),
+        bounds = new Rect(new Point(0, 0), size),
+        contextPropertiesFill = new ContextProperties([['fillStyle', 'black']]),
+        contextPropertiesGrid = new ContextProperties([['strokeStyle', 'grey'], ['lineWidth', 2]]),
+        gridPath = new Path2D(),
+        fillShape = createShape(shapeFactoryConstants.TYPE_RECTANGLE, bounds, contextPropertiesFill);
 
-    ctx.save();
+    let gridShape,
+        backgroundShape;
 
-    ctx.fillStyle = 'black';
-    ctx.fillRect(0, 0, size.width, size.height);
-    ctx.translate(halfSize.width, halfSize.height);
+    // draw crosshair grid
 
-    // draw cross-hairs
-    ctx.strokeStyle = 'grey';
-    ctx.lineWidth = 2;
-    ctx.moveTo(0, -halfSize.height);
-    ctx.lineTo(0, halfSize.height);
-    ctx.moveTo(-halfSize.width, 0);
-    ctx.lineTo(halfSize.width, 0);
-    ctx.stroke();
+    // first vertical line
+    gridPath.moveTo(halfSize.width, 0);
+    gridPath.lineTo(halfSize.width, size.height);
 
-    ctx.restore();
+    // then horizontal line
+    gridPath.moveTo(0, halfSize.height);
+    gridPath.lineTo(size.width, halfSize.height);
+
+    gridShape = new Shape(bounds, gridPath, contextPropertiesGrid);
+    backgroundShape = new CompositeShape([fillShape, gridShape]);
+
+    return backgroundShape;
 }
 
 
@@ -66,7 +74,6 @@ function _redraw() {
 
     ctx.clearRect(0, 0, size.width, size.height);
 
-    drawBackground(ctx, size);
     displayListRenderer.renderList(displayList);
 
     if (properties.dragRect) {
@@ -160,10 +167,14 @@ const WardDraw = function (canvas, size) {
     properties.contextProperties = new ContextProperties();
     properties.displayList = new DisplayList();
     properties.displayListRenderer = new DisplayListRenderer(properties.ctx);
+    properties.backgroundShape = createBackground(size);
     properties.mode = wardDrawConstants.MODE_CREATE_RECTANGLES;
 
     _setupHandlers.call(this);
-    _redraw.call(this);
+    //_redraw.call(this);
+
+    // causes the backgroundShape to be added and a _redraw
+    this.removeAll();
 };
 
 
@@ -182,7 +193,9 @@ WardDraw.prototype.setMode = function (mode) {
 };
 
 WardDraw.prototype.removeAll = function () {
-    internal(this).displayList.removeAll();
+    const properties = internal(this);
+    properties.displayList.removeAll();
+    properties.displayList.addShape(properties.backgroundShape);
     _redraw.call(this);
 };
 

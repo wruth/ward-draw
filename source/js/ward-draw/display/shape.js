@@ -22,4 +22,8 @@ Shape.prototype.draw = function (ctx) {
     ctx.restore();
 };
 
+Shape.prototype.getBounds = function () {
+    return internal(this).bounds;
+};
+
 module.exports = Shape;

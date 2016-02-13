@@ -34,8 +34,30 @@ function getOrientedRect(rect) {
     return new Rect(origin, size);
 }
 
+/**
+ * Given two rectangles, return a new rectangle which is exactly big enough to contain each supplied rectangle.
+ *
+ * @param {Rect} recta a rectangle to combine
+ * @param {Rect} rectb a rectangle to combine
+ * @return {Rect} a new rectangle exactly containing the supplied rectangles
+ */
+function getUnionRect(pRecta, pRectb) {
+    const recta = getOrientedRect(pRecta),
+        rectb = getOrientedRect(pRectb),
+        minX = Math.min(recta.origin.x, rectb.origin.x),
+        minY = Math.min(recta.origin.y, rectb.origin.y),
+        maxX = Math.max(recta.origin.x + recta.size.width, rectb.origin.x + rectb.size.width),
+        maxY = Math.max(recta.origin.y + recta.size.height, rectb.origin.y + rectb.size.height),
+        origin = new Point(minX, minY),
+        size = new Size(maxX - minX, maxY - minY),
+        rect = new Rect(origin, size);
+
+    return rect;
+}
+
 const rectFunctions = {
-    getOrientedRect: getOrientedRect
+    getOrientedRect: getOrientedRect,
+    getUnionRect: getUnionRect
 };
 
 module.exports = rectFunctions;
