@@ -1,12 +1,16 @@
 'use strict';
 
-const Rect = function (origin, size) {
-    Object.defineProperty(this, 'origin', { get: function () { return origin; } });
-    Object.defineProperty(this, 'size', { get: function () { return size; } });
-};
+class Rect {
 
-Rect.prototype.toString = function () {
-    return `{${this.origin}, ${this.size}}`;
-};
+    constructor(origin, size) {
+        Object.defineProperty(this, 'origin', { get: function () { return origin; } });
+        Object.defineProperty(this, 'size', { get: function () { return size; } });
+    }
+
+    toString() {
+        return `{${this.origin}, ${this.size}}`;
+    }
+
+}
 
 module.exports = Rect;

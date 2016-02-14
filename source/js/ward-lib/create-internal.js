@@ -7,7 +7,7 @@
  * @return {function} an accessor function which given a unique object will return a consistent property object for
  *  that object
  */
-const createInternal = function () {
+function createInternal() {
     const map = new WeakMap();
 
     return function (obj) {
@@ -18,6 +18,6 @@ const createInternal = function () {
 
         return map.get(obj);
     };
-};
+}
 
 exports.createInternal = createInternal;

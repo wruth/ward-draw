@@ -41,44 +41,39 @@ function filterProperties(properties) {
     return properties;
 }
 
-/**
- * ContextProperties
- *
- * @constructor
- * @param {iterable} iterable a collection of key/value pairs
- */
-const ContextProperties = function (iterable) {
-    const properties = internal(this);
 
-    properties.map = new Map(filterProperties(iterable));
-};
+class ContextProperties {
 
+    /**
+     * @constructor
+     * @param {iterable} iterable a collection of key/value pairs
+     */
+    constructor(iterable) {
+        const properties = internal(this);
 
-//----------------------------------------------------------------------------------------------------------------------
-//
-// public methods
-//
-//----------------------------------------------------------------------------------------------------------------------
-
-ContextProperties.prototype.set = function (key, value) {
-
-    if (validProperties.has(key)) {
-        internal(this).map.set(key, value);
+        properties.map = new Map(filterProperties(iterable));
     }
-};
 
-ContextProperties.prototype.applyToContext = function (ctx) {
-    const map = internal(this).map;
+    set(key, value) {
+        if (validProperties.has(key)) {
+            internal(this).map.set(key, value);
+        }
+    }
 
-    map.forEach(function (value, key) {
-        ctx[key] = value;
-    });
-};
+    applyToContext(ctx) {
+        const map = internal(this).map;
 
-ContextProperties.prototype.clone = function () {
-    const map = internal(this).map;
+        map.forEach(function (value, key) {
+            ctx[key] = value;
+        });
+    }
 
-    return new ContextProperties(map.entries());
-};
+    clone() {
+        const map = internal(this).map;
+
+        return new ContextProperties(map.entries());
+    }
+
+}
 
 module.exports = ContextProperties;

@@ -23,46 +23,50 @@ function getAggregateBounds(shapes) {
     return aggregateBounds;
 }
 
-const CompositeShape = function (shapes) {
-    const properties = internal(this);
 
-    properties.shapes = shapes;
-    properties.bounds = getAggregateBounds(shapes);
+class CompositeShape {
 
-    // start with identity matrix
-    properties.transform = [1, 0, 0, 1, 0, 0];
-};
+    constructor(shapes) {
+        const properties = internal(this);
 
-CompositeShape.prototype.draw = function (ctx) {
-    const properties = internal(this);
-    ctx.save();
-    ctx.setTransform.apply(ctx, properties.transform);
+        properties.shapes = shapes;
+        properties.bounds = getAggregateBounds(shapes);
 
-    for (let shape of properties.shapes) {
-        shape.draw(ctx);
+        // start with identity matrix
+        properties.transform = [1, 0, 0, 1, 0, 0];
     }
 
-    ctx.restore();
-};
+    draw(ctx) {
+        const properties = internal(this);
+        ctx.save();
+        ctx.setTransform.apply(ctx, properties.transform);
 
-CompositeShape.prototype.getBounds = function () {
-    return internal(this).bounds;
-};
+        for (let shape of properties.shapes) {
+            shape.draw(ctx);
+        }
 
-/**
- * Called when "breaking" the group of shapes. Returns an array of the composed shapes so that they can be handled
- * individually.
- *
- * @return {Array} an array of any composed Shapes
- */
-CompositeShape.prototype.removeAll = function () {
-    const properties = internal(this),
-        shapes = properties.shapes;
-    delete properties.shapes;
+        ctx.restore();
+    }
 
-    // TODO: concat the groups transform to the individual shapes
+    getBounds() {
+        return internal(this).bounds;
+    }
 
-    return shapes;
-};
+    /**
+     * Called when "breaking" the group of shapes. Returns an array of the composed shapes so that they can be handled
+     * individually.
+     *
+     * @return {Array} an array of any composed Shapes
+     */
+    removeAll() {
+        const properties = internal(this),
+            shapes = properties.shapes;
+        delete properties.shapes;
+
+
+        return shapes;
+    }
+
+}
 
 module.exports = CompositeShape;

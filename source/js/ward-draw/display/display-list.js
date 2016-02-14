@@ -4,25 +4,27 @@ const internal = require('../../ward-lib/create-internal.js').createInternal();
 
 /**
  * DisplayList
- *
- * @constructor
  */
-const DisplayList = function () {
-    const properties = internal(this);
-    properties.list = [];
-};
+class DisplayList {
 
-DisplayList.prototype.addShape = function (shape) {
-    internal(this).list.push(shape);
-    return this;
-};
+    constructor() {
+        const properties = internal(this);
+        properties.list = [];
+    }
 
-DisplayList.prototype.removeAll = function () {
-    internal(this).list = [];
-};
+    addShape(shape) {
+        internal(this).list.push(shape);
+        return this;
+    }
 
-DisplayList.prototype.getIterator = function () {
-    return internal(this).list[Symbol.iterator]();
-};
+    removeAll() {
+        internal(this).list = [];
+    }
+
+    getIterator() {
+        return internal(this).list[Symbol.iterator]();
+    }
+
+}
 
 module.exports = DisplayList;

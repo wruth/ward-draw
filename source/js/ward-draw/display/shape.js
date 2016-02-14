@@ -2,28 +2,32 @@
 
 const internal = require('../../ward-lib/create-internal.js').createInternal();
 
-const Shape = function (bounds, path, contextProperties) {
-    const properties = internal(this);
-    properties.bounds = bounds;
-    properties.path = path;
-    properties.contextProperties = contextProperties;
+class Shape {
 
-    // start with identity matrix
-    properties.transform = [1, 0, 0, 1, 0, 0];
-};
+    constructor(bounds, path, contextProperties) {
+        const properties = internal(this);
+        properties.bounds = bounds;
+        properties.path = path;
+        properties.contextProperties = contextProperties;
 
-Shape.prototype.draw = function (ctx) {
-    const properties = internal(this);
-    ctx.save();
-    ctx.setTransform.apply(ctx, properties.transform);
-    properties.contextProperties.applyToContext(ctx);
-    ctx.fill(properties.path);
-    ctx.stroke(properties.path);
-    ctx.restore();
-};
+        // start with identity matrix
+        properties.transform = [1, 0, 0, 1, 0, 0];
+    }
 
-Shape.prototype.getBounds = function () {
-    return internal(this).bounds;
-};
+    draw(ctx) {
+        const properties = internal(this);
+        ctx.save();
+        ctx.setTransform.apply(ctx, properties.transform);
+        properties.contextProperties.applyToContext(ctx);
+        ctx.fill(properties.path);
+        ctx.stroke(properties.path);
+        ctx.restore();
+    }
+
+    getBounds() {
+        return internal(this).bounds;
+    }
+
+}
 
 module.exports = Shape;

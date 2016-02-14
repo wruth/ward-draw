@@ -149,54 +149,48 @@ function _handleMouseUp(evt) {
     _redraw.call(this);
 }
 
-/**
- * WardDraw
- *
- * @constructor
- * @param {Canvas} canvas a Canvas instance
- * @param {Size} size a Size instance
- */
-const WardDraw = function (canvas, size) {
-    const properties = internal(this);
-    canvas.width = size.width;
-    canvas.height = size.height;
 
-    properties.canvas = canvas;
-    properties.size = size;
-    properties.ctx = canvas.getContext('2d');
-    properties.contextProperties = new ContextProperties();
-    properties.displayList = new DisplayList();
-    properties.displayListRenderer = new DisplayListRenderer(properties.ctx);
-    properties.backgroundShape = createBackground(size);
-    properties.mode = wardDrawConstants.MODE_CREATE_RECTANGLES;
+class WardDraw {
 
-    _setupHandlers.call(this);
-    //_redraw.call(this);
+    /**
+     * @constructor
+     * @param {Canvas} canvas a Canvas instance
+     * @param {Size} size a Size instance
+     */
+    constructor(canvas, size) {
+        const properties = internal(this);
+        canvas.width = size.width;
+        canvas.height = size.height;
 
-    // causes the backgroundShape to be added and a _redraw
-    this.removeAll();
-};
+        properties.canvas = canvas;
+        properties.size = size;
+        properties.ctx = canvas.getContext('2d');
+        properties.contextProperties = new ContextProperties();
+        properties.displayList = new DisplayList();
+        properties.displayListRenderer = new DisplayListRenderer(properties.ctx);
+        properties.backgroundShape = createBackground(size);
+        properties.mode = wardDrawConstants.MODE_CREATE_RECTANGLES;
 
+        _setupHandlers.call(this);
 
-//----------------------------------------------------------------------------------------------------------------------
-//
-// public methods
-//
-//----------------------------------------------------------------------------------------------------------------------
+        // causes the backgroundShape to be added and a _redraw
+        this.removeAll();
+    }
 
-WardDraw.prototype.setContextProperty = function (key, value) {
-    internal(this).contextProperties.set(key, value);
-};
+    setContextProperty(key, value) {
+        internal(this).contextProperties.set(key, value);
+    }
 
-WardDraw.prototype.setMode = function (mode) {
-    internal(this).mode = mode;
-};
+    setMode(mode) {
+        internal(this).mode = mode;
+    }
 
-WardDraw.prototype.removeAll = function () {
-    const properties = internal(this);
-    properties.displayList.removeAll();
-    properties.displayList.addShape(properties.backgroundShape);
-    _redraw.call(this);
-};
+    removeAll() {
+        const properties = internal(this);
+        properties.displayList.removeAll();
+        properties.displayList.addShape(properties.backgroundShape);
+        _redraw.call(this);
+    }
+}
 
 module.exports = WardDraw;
