@@ -1,12 +1,15 @@
 'use strict';
 
 const internal = require('../../ward-lib/create-internal.js').createInternal(),
+    AbstractShape = require('./abstract-shape.js'),
     renderContext = require('../../ward-lib/graphics/renderers/context-renderer.js');
 
-class Shape {
+class Shape extends AbstractShape {
 
     constructor(bounds, pathEncoding, contextProperties) {
-        const properties = internal(this);
+        let propoertiesWrapper = {};
+        super(propoertiesWrapper);
+        const properties = internal(this, propoertiesWrapper.properties);
         properties.bounds = bounds;
         properties.pathEncoding = pathEncoding;
         properties.contextProperties = contextProperties;
@@ -26,10 +29,6 @@ class Shape {
         ctx.fill();
         ctx.stroke();
         ctx.restore();
-    }
-
-    getBounds() {
-        return internal(this).bounds;
     }
 
 }

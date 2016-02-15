@@ -5,6 +5,7 @@
 'use strict';
 
 const internal = require('../../ward-lib/create-internal.js').createInternal(),
+    AbstractShape = require('./abstract-shape.js'),
     rectFunctions = require('../../ward-lib/graphics/models/rect-functions.js');
 
 function getAggregateBounds(shapes) {
@@ -24,10 +25,12 @@ function getAggregateBounds(shapes) {
 }
 
 
-class CompositeShape {
+class CompositeShape extends AbstractShape {
 
     constructor(shapes) {
-        const properties = internal(this);
+        let propoertiesWrapper = {};
+        super(propoertiesWrapper);
+        const properties = internal(this, propoertiesWrapper.properties);
 
         properties.shapes = shapes;
         properties.bounds = getAggregateBounds(shapes);
@@ -46,10 +49,6 @@ class CompositeShape {
         }
 
         ctx.restore();
-    }
-
-    getBounds() {
-        return internal(this).bounds;
     }
 
     /**
