@@ -1,13 +1,14 @@
 'use strict';
 
-const internal = require('../../ward-lib/create-internal.js').createInternal();
+const internal = require('../../ward-lib/create-internal.js').createInternal(),
+    renderContext = require('../../ward-lib/graphics/renderers/context-renderer.js');
 
 class Shape {
 
-    constructor(bounds, path, contextProperties) {
+    constructor(bounds, pathEncoding, contextProperties) {
         const properties = internal(this);
         properties.bounds = bounds;
-        properties.path = path;
+        properties.pathEncoding = pathEncoding;
         properties.contextProperties = contextProperties;
 
         // start with identity matrix
@@ -16,11 +17,14 @@ class Shape {
 
     draw(ctx) {
         const properties = internal(this);
+
         ctx.save();
         ctx.setTransform.apply(ctx, properties.transform);
         properties.contextProperties.applyToContext(ctx);
-        ctx.fill(properties.path);
-        ctx.stroke(properties.path);
+        renderContext(ctx, properties.pathEncoding);
+
+        ctx.fill();
+        ctx.stroke();
         ctx.restore();
     }
 

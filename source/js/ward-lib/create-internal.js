@@ -10,10 +10,10 @@
 function createInternal() {
     const map = new WeakMap();
 
-    return function (obj) {
+    return function (obj, properties) {
 
         if (!map.has(obj)) {
-            map.set(obj, {});
+            map.set(obj, properties || {});
         }
 
         return map.get(obj);

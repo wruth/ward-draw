@@ -5,6 +5,7 @@ const internal = require('../ward-lib/create-internal.js').createInternal(),
     Point = require('../ward-lib/graphics/models/point.js'),
     Size = require('../ward-lib/graphics/models/size.js'),
     Rect = require('../ward-lib/graphics/models/rect.js'),
+    PathEncoding = require('../ward-lib/graphics/models/path-encoding.js'),
     ContextProperties = require('./models/context-properties.js'),
     DisplayList = require('./display/display-list.js'),
     DisplayListRenderer = require('./display/display-list-renderer.js'),
@@ -36,7 +37,7 @@ function createBackground(size) {
         bounds = new Rect(new Point(0, 0), size),
         contextPropertiesFill = new ContextProperties([['fillStyle', 'black']]),
         contextPropertiesGrid = new ContextProperties([['strokeStyle', 'grey'], ['lineWidth', 2]]),
-        gridPath = new Path2D(),
+        gridPath = new PathEncoding(),
         fillShape = createShape(shapeFactoryConstants.TYPE_RECTANGLE, bounds, contextPropertiesFill);
 
     let gridShape,
@@ -45,12 +46,14 @@ function createBackground(size) {
     // draw crosshair grid
 
     // first vertical line
-    gridPath.moveTo(halfSize.width, 0);
-    gridPath.lineTo(halfSize.width, size.height);
+    gridPath
+        .beginPath()
+        .moveTo(halfSize.width, 0)
+        .lineTo(halfSize.width, size.height)
 
     // then horizontal line
-    gridPath.moveTo(0, halfSize.height);
-    gridPath.lineTo(size.width, halfSize.height);
+        .moveTo(0, halfSize.height)
+        .lineTo(size.width, halfSize.height);
 
     gridShape = new Shape(bounds, gridPath, contextPropertiesGrid);
     backgroundShape = new CompositeShape([fillShape, gridShape]);
