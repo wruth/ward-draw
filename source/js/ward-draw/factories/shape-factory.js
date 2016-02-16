@@ -1,6 +1,6 @@
 'use strict';
 
-const rectFunctions = require('../../ward-lib/graphics/models/rect-functions.js'),
+const graphicsFunctions = require('../../ward-lib/graphics/models/graphics-functions.js'),
     PathEncoding = require('../../ward-lib/graphics/models/path-encoding.js'),
     constants = require('./shape-factory-constants.js'),
     Shape = require('../display/shape.js');
@@ -23,7 +23,7 @@ function createEllipsePath(bounds) {
 }
 
 function createShape(type, bounds, contextProperties) {
-    const orientedBounds = rectFunctions.getOrientedRect(bounds);
+    const orientedBounds = graphicsFunctions.getOrientedRect(bounds);
     let path;
 
     switch (type) {

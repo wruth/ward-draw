@@ -6,22 +6,19 @@
 
 const internal = require('../../ward-lib/create-internal.js').createInternal(),
     AbstractShape = require('./abstract-shape.js'),
-    rectFunctions = require('../../ward-lib/graphics/models/rect-functions.js');
+    graphicsFunctions = require('../../ward-lib/graphics/models/graphics-functions.js');
 
-function getAggregateBounds(shapes) {
-    let aggregateBounds;
+function getUnionBounds(shapes) {
+    let unionBounds,
+        allBounds = [];
 
     for (let shape of shapes) {
-
-        if (!aggregateBounds) {
-            aggregateBounds = shape.getBounds();
-        } else {
-            aggregateBounds = rectFunctions.getUnionRect(aggregateBounds, shape.getBounds());
-        }
-
+        allBounds.push(shape.bounds);
     }
 
-    return aggregateBounds;
+    unionBounds = graphicsFunctions.getUnionRect.apply(null, allBounds);
+
+    return unionBounds;
 }
 
 
@@ -33,7 +30,7 @@ class CompositeShape extends AbstractShape {
         const properties = internal(this, propoertiesWrapper.properties);
 
         properties.shapes = shapes;
-        properties.bounds = getAggregateBounds(shapes);
+        properties.bounds = getUnionBounds(shapes);
 
         // start with identity matrix
         properties.transform = [1, 0, 0, 1, 0, 0];

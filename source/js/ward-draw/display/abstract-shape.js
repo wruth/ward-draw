@@ -6,11 +6,20 @@ class AbstractShape {
 
     constructor(propertiesWrapper) {
         const properties = internal(this);
+        properties.locked = false;
         propertiesWrapper.properties = properties;
     }
 
-    getBounds() {
+    get bounds() {
         return internal(this).bounds;
+    }
+
+    get locked() {
+        return internal(this).locked;
+    }
+
+    set locked(isLocked) {
+        internal(this).locked = isLocked;
     }
 
 }

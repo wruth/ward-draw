@@ -3,16 +3,16 @@ var gulp = require('gulp'),
     rename = require('gulp-rename'),
 
 // Build Dependencies
-    browserify = require('gulp-browserify'),
+    gulpBrowserify = require('gulp-browserify'),
 
 // Test Dependencies
-    mochaPhantomjs = require('gulp-mocha-phantomjs');
-
+    mocha = require('gulp-mocha'),
+    babel = require('gulp-babel');
 
 // Browserify
 gulp.task('browserify-src', function () {
     return gulp.src('source/js/index.js')
-        .pipe(browserify({
+        .pipe(gulpBrowserify({
             insertGlobals: true
         }))
         .pipe(rename('script.js'))
@@ -22,11 +22,12 @@ gulp.task('browserify-src', function () {
 
 gulp.task('browserify-test', function () {
     return gulp.src('test/index.js')
-        .pipe(browserify({
-            insertGlobals: true
-        }))
-        .pipe(rename('test.js'))
-        .pipe(gulp.dest('build'));
+       .pipe(gulpBrowserify({
+           insertGlobals: true
+       }))
+       .pipe(babel())
+       .pipe(rename('test.js'))
+       .pipe(gulp.dest('build'));
 });
 
 // Copy
@@ -41,17 +42,20 @@ gulp.task('copy-css', function () {
 });
 
 gulp.task('copy', ['copy-html', 'copy-css'], function () {
-    return gulp.src('source/index.html')
-        .pipe(gulp.dest('dist'));
+    console.log('copying');
+});
+
+// Build
+gulp.task('build', ['browserify-src', 'copy'], function () {
+    console.log('building');
 });
 
 // Test
-
-//gulp.task('test', ['browserify-test'], function () {
-//    return gulp.src('test/index.html')
-//        .pipe(mochaPhantomjs());
-//});
+gulp.task('test', ['browserify-test'], function () {
+    return gulp.src('./build/test.js', {read: false})
+        .pipe(mocha({reporter: 'nyan'}));
+});
 
 // Tasks
 
-gulp.task('default', [/*'test', */'browserify-src', 'copy']);
+gulp.task('default', ['test', 'build']);

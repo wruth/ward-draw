@@ -7,6 +7,10 @@ class Point {
         Object.defineProperty(this, 'y', { get: function () { return y; } });
     }
 
+    equals(point) {
+        return (point.x === this.x && point.y === this.y);
+    }
+
     toString() {
         return `{x: ${this.x}, y: ${this.y}}`;
     }

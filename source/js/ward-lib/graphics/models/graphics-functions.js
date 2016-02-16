@@ -35,29 +35,39 @@ function getOrientedRect(rect) {
 }
 
 /**
- * Given two rectangles, return a new rectangle which is exactly big enough to contain each supplied rectangle.
+ * Given a list of rectangles, return a new rectangle which is exactly big enough to contain all of the supplied
+ * rectangles. It is assumed the rectangles are all oriented (have non-negative widths and heights).
  *
  * @param {Rect} recta a rectangle to combine
  * @param {Rect} rectb a rectangle to combine
  * @return {Rect} a new rectangle exactly containing the supplied rectangles
  */
-function getUnionRect(pRecta, pRectb) {
-    const recta = getOrientedRect(pRecta),
-        rectb = getOrientedRect(pRectb),
-        minX = Math.min(recta.origin.x, rectb.origin.x),
-        minY = Math.min(recta.origin.y, rectb.origin.y),
-        maxX = Math.max(recta.origin.x + recta.size.width, rectb.origin.x + rectb.size.width),
-        maxY = Math.max(recta.origin.y + recta.size.height, rectb.origin.y + rectb.size.height),
-        origin = new Point(minX, minY),
-        size = new Size(maxX - minX, maxY - minY),
-        rect = new Rect(origin, size);
+function getUnionRect(...rectangles) {
+    let minX = Math.MAX_VALUE,
+        minY = Math.MAX_VALUE,
+        maxX = Math.MIN_VALUE,
+        maxY = Math.MIN_VALUE,
+        unionRect,
+        origin,
+        size;
 
-    return rect;
+    for (let rect of rectangles) {
+        minX = Math.min(minX, rect.origin.x);
+        minY = Math.min(minY, rect.origin.y);
+        maxX = Math.max(maxX, rect.origin.x + rect.size.width);
+        maxY = Math.max(maxY, rect.origin.y + rect.size.height);
+    }
+
+    origin = new Point(minX, minY);
+    size = new Size(maxX - minX, maxY - minY);
+    unionRect = new Rect(origin, size);
+
+    return unionRect;
 }
 
-const rectFunctions = {
+const graphicsFunctions = {
     getOrientedRect: getOrientedRect,
     getUnionRect: getUnionRect
 };
 
-module.exports = rectFunctions;
+module.exports = graphicsFunctions;

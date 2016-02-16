@@ -7,6 +7,10 @@ class Rect {
         Object.defineProperty(this, 'size', { get: function () { return size; } });
     }
 
+    equals(rect) {
+        return (rect.origin.equals(this.origin) && rect.size.equals(this.size));
+    }
+
     toString() {
         return `{${this.origin}, ${this.size}}`;
     }

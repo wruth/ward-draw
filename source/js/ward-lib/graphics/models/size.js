@@ -7,6 +7,10 @@ class Size {
         Object.defineProperty(this, 'height', { get: function () { return height; } });
     }
 
+    equals(size) {
+        return (size.width === this.width && size.height === this.height);
+    }
+
     toString() {
         return `{width: ${this.width}, height: ${this.height}}`;
     }
