@@ -1,9 +1,9 @@
 'use strict';
 
 const internal = require('../../create-internal.js').createInternal(),
-    constants = require('./path-encoding-constants');
+    constants = require('./render-encoding-constants');
 
-class PathEncoding {
+class RenderEncoding {
 
     constructor() {
         internal(this, []);
@@ -92,4 +92,4 @@ class PathEncoding {
     }
 }
 
-module.exports = PathEncoding;
+module.exports = RenderEncoding;

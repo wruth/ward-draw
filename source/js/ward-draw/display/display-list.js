@@ -8,21 +8,21 @@ const internal = require('../../ward-lib/create-internal.js').createInternal();
 class DisplayList {
 
     constructor() {
-        const properties = internal(this);
-        properties.list = [];
+        internal(this, []);
     }
 
     addShape(shape) {
-        internal(this).list.push(shape);
+        internal(this).push(shape);
         return this;
     }
 
     removeAll() {
-        internal(this).list = [];
+        internal(this).splice(0);
+        return this;
     }
 
     getIterator() {
-        return internal(this).list[Symbol.iterator]();
+        return internal(this)[Symbol.iterator]();
     }
 
 }

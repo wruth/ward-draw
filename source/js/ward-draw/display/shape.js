@@ -7,9 +7,9 @@ const internal = require('../../ward-lib/create-internal.js').createInternal(),
 class Shape extends AbstractShape {
 
     constructor(bounds, pathEncoding, contextProperties) {
-        let propoertiesWrapper = {};
-        super(propoertiesWrapper);
-        const properties = internal(this, propoertiesWrapper.properties);
+        let propertiesWrapper = {};
+        super(propertiesWrapper);
+        const properties = internal(this, propertiesWrapper.properties);
         properties.bounds = bounds;
         properties.pathEncoding = pathEncoding;
         properties.contextProperties = contextProperties;

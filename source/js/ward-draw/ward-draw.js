@@ -5,14 +5,12 @@ const internal = require('../ward-lib/create-internal.js').createInternal(),
     Point = require('../ward-lib/graphics/models/point.js'),
     Size = require('../ward-lib/graphics/models/size.js'),
     Rect = require('../ward-lib/graphics/models/rect.js'),
-    PathEncoding = require('../ward-lib/graphics/models/path-encoding.js'),
     ContextProperties = require('./models/context-properties.js'),
     DisplayList = require('./display/display-list.js'),
     DisplayListRenderer = require('./display/display-list-renderer.js'),
-    Shape = require('./display/shape.js'),
-    CompositeShape = require('./display/composite-shape.js'),
     createShape = require('./factories/shape-factory.js'),
     shapeFactoryConstants = require('./factories/shape-factory-constants.js'),
+    createBackgroundShape = require('./factories/background-shape-factory.js'),
     modeToShapeMap = new Map([
         [wardDrawConstants.MODE_CREATE_ELLIPSES, shapeFactoryConstants.TYPE_ELLIPSE],
         [wardDrawConstants.MODE_CREATE_RECTANGLES, shapeFactoryConstants.TYPE_RECTANGLE]
@@ -30,35 +28,6 @@ function drawDragRect(ctx, rect) {
     ctx.strokeStyle = 'blue';
     ctx.strokeRect(rect.origin.x, rect.origin.y, rect.size.width, rect.size.height);
     ctx.restore();
-}
-
-function createBackground(size) {
-    const halfSize = new Size(size.width / 2, size.height / 2),
-        bounds = new Rect(new Point(0, 0), size),
-        contextPropertiesFill = new ContextProperties([['fillStyle', 'black']]),
-        contextPropertiesGrid = new ContextProperties([['strokeStyle', 'grey'], ['lineWidth', 2]]),
-        gridPath = new PathEncoding(),
-        fillShape = createShape(shapeFactoryConstants.TYPE_RECTANGLE, bounds, contextPropertiesFill);
-
-    let gridShape,
-        backgroundShape;
-
-    // draw crosshair grid
-
-    // first vertical line
-    gridPath
-        .beginPath()
-        .moveTo(halfSize.width, 0)
-        .lineTo(halfSize.width, size.height)
-
-    // then horizontal line
-        .moveTo(0, halfSize.height)
-        .lineTo(size.width, halfSize.height);
-
-    gridShape = new Shape(bounds, gridPath, contextPropertiesGrid);
-    backgroundShape = new CompositeShape([fillShape, gridShape]);
-
-    return backgroundShape;
 }
 
 
@@ -171,7 +140,7 @@ class WardDraw {
         properties.contextProperties = new ContextProperties();
         properties.displayList = new DisplayList();
         properties.displayListRenderer = new DisplayListRenderer(properties.ctx);
-        properties.backgroundShape = createBackground(size);
+        properties.backgroundShape = createBackgroundShape(size);
         properties.mode = wardDrawConstants.MODE_CREATE_RECTANGLES;
 
         _setupHandlers.call(this);

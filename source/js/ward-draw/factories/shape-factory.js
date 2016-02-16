@@ -1,19 +1,19 @@
 'use strict';
 
 const graphicsFunctions = require('../../ward-lib/graphics/models/graphics-functions.js'),
-    PathEncoding = require('../../ward-lib/graphics/models/path-encoding.js'),
+    RenderEncoding = require('../../ward-lib/graphics/models/render-encoding.js'),
     constants = require('./shape-factory-constants.js'),
     Shape = require('../display/shape.js');
 
 function createRectPath(bounds) {
-    const path = new PathEncoding();
+    const path = new RenderEncoding();
     path.beginPath()
         .rect(bounds.origin.x, bounds.origin.y, bounds.size.width, bounds.size.height);
     return path;
 }
 
 function createEllipsePath(bounds) {
-    const path = new PathEncoding(),
+    const path = new RenderEncoding(),
         radiusX = bounds.size.width / 2,
         radiusY = bounds.size.height / 2;
 
