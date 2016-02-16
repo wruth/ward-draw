@@ -5,6 +5,19 @@ const Rect = require('./rect.js'),
     Point = require('./point.js');
 
 /**
+ * Convenience factory function for a `Rect`.
+ *
+ * @param {Number} x x coordinate of corner of rect
+ * @param {Number} y y coordintate of corner of rect
+ * @param {Number} width width of the rect
+ * @param {Number} height height of the rect
+ * @return {Rect} a fresh Rect
+ */
+function getRect(x, y, width, height) {
+    return new Rect(new Point(x, y), new Size(width, height));
+}
+
+/**
  * Ensures a Rect's origin point represents the upper-left corner, with positive width and height.
  *
  * @param {Rect} rect a possibly dis-oriented Rect
@@ -43,15 +56,16 @@ function getOrientedRect(rect) {
  * @return {Rect} a new rectangle exactly containing the supplied rectangles
  */
 function getUnionRect(...rectangles) {
-    let minX = Math.MAX_VALUE,
-        minY = Math.MAX_VALUE,
-        maxX = Math.MIN_VALUE,
-        maxY = Math.MIN_VALUE,
+    let minX = Number.MAX_VALUE,
+        minY = Number.MAX_VALUE,
+        maxX = Number.MIN_VALUE,
+        maxY = Number.MIN_VALUE,
         unionRect,
         origin,
         size;
 
     for (let rect of rectangles) {
+ //   for (let i = 0, rect = rectangles[i]; i < rectangles.length; i++, rect = rectangles[i]) {
         minX = Math.min(minX, rect.origin.x);
         minY = Math.min(minY, rect.origin.y);
         maxX = Math.max(maxX, rect.origin.x + rect.size.width);
@@ -66,6 +80,7 @@ function getUnionRect(...rectangles) {
 }
 
 const graphicsFunctions = {
+    getRect: getRect,
     getOrientedRect: getOrientedRect,
     getUnionRect: getUnionRect
 };
