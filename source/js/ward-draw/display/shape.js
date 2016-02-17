@@ -2,7 +2,8 @@
 
 const internal = require('../../ward-lib/create-internal.js').createInternal(),
     AbstractShape = require('./abstract-shape.js'),
-    renderContext = require('../../ward-lib/graphics/renderers/context-renderer.js');
+    renderContext = require('../../ward-lib/graphics/renderers/context-renderer.js'),
+    RenderEncoding = require('../../ward-lib/graphics/models/render-encoding.js');
 
 class Shape extends AbstractShape {
 
@@ -12,22 +13,38 @@ class Shape extends AbstractShape {
         const properties = internal(this, propertiesWrapper.properties);
         properties.bounds = bounds;
         properties.pathEncoding = pathEncoding;
+        properties.transformEncoding = new RenderEncoding();
         properties.contextProperties = contextProperties;
+    }
 
-        // start with identity matrix
-        properties.transform = [1, 0, 0, 1, 0, 0];
+    isPointInShape(ctx, point) {
+        const properties = internal(this);
+        let isInPath,
+            path = properties.path;
+
+        // if there's no path, the shape has never been drawn, so can't evaluate
+        if (!path) {
+            return false;
+        }
+
+        ctx.save();
+        renderContext(ctx, properties.transformEncoding);
+        isInPath = ctx.isPointInPath(path, point.x, point.y);
+        ctx.restore();
+        return isInPath;
     }
 
     draw(ctx) {
-        const properties = internal(this);
+        const properties = internal(this),
+            path = new Path2D();
 
         ctx.save();
-        ctx.setTransform.apply(ctx, properties.transform);
+        renderContext(ctx, properties.transformEncoding);
         properties.contextProperties.applyToContext(ctx);
-        renderContext(ctx, properties.pathEncoding);
-
-        ctx.fill();
-        ctx.stroke();
+        renderContext(path, properties.pathEncoding);
+        properties.path = path;
+        ctx.fill(path);
+        ctx.stroke(path);
         ctx.restore();
     }
 

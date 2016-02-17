@@ -17,15 +17,26 @@ class CompositeShape extends AbstractShape {
 
         properties.shapes = shapes;
         properties.bounds = displayFunctions.getUnionBounds(shapes);
+    }
 
-        // start with identity matrix
-        properties.transform = [1, 0, 0, 1, 0, 0];
+    isPointInShape(ctx, point) {
+        const properties = internal(this);
+        let isInShape = false;
+
+        for (let shape of properties.shapes) {
+
+            if (shape.isPointInShape(ctx, point)) {
+                isInShape = true;
+                break;
+            }
+        }
+
+        return isInShape;
     }
 
     draw(ctx) {
         const properties = internal(this);
         ctx.save();
-        ctx.setTransform.apply(ctx, properties.transform);
 
         for (let shape of properties.shapes) {
             shape.draw(ctx);

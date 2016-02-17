@@ -7,8 +7,7 @@ const graphicsFunctions = require('../../ward-lib/graphics/models/graphics-funct
 
 function createRectPath(bounds) {
     const path = new RenderEncoding();
-    path.beginPath()
-        .rect(bounds.origin.x, bounds.origin.y, bounds.size.width, bounds.size.height);
+    path.rect(bounds.origin.x, bounds.origin.y, bounds.size.width, bounds.size.height);
     return path;
 }
 
@@ -17,8 +16,7 @@ function createEllipsePath(bounds) {
         radiusX = bounds.size.width / 2,
         radiusY = bounds.size.height / 2;
 
-    path.beginPath()
-        .ellipse(bounds.origin.x + radiusX, bounds.origin.y + radiusY, radiusX, radiusY, 0, 0, Math.PI * 2);
+    path.ellipse(bounds.origin.x + radiusX, bounds.origin.y + radiusY, radiusX, radiusY, 0, 0, Math.PI * 2);
     return path;
 }
 

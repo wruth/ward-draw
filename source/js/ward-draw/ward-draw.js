@@ -65,6 +65,22 @@ function _addShape(bounds) {
 
 }
 
+function _getFirstSelectableShape(point) {
+    const properties = internal(this),
+        ctx = properties.ctx,
+        listIterator = properties.displayList.getIterator();
+
+    for (let element = listIterator.next(); !element.done; element = listIterator.next()) {
+        let shape = element.value;
+
+        if (!shape.locked && shape.isPointInShape(ctx, point)) {
+            console.log('point in shape!');
+            break;
+        }
+    }
+
+}
+
 function _getMousePosition(evt) {
     const canvas = internal(this).canvas,
         rect = canvas.getBoundingClientRect();
@@ -90,11 +106,17 @@ function _setupHandlers() {
 
 function _handleMouseDown(evt) {
     const properties = internal(this),
-        canvas = properties.canvas;
+        canvas = properties.canvas,
+        mouseDownPoint = _getMousePosition.call(this, evt);
 
-    properties.mouseDownPoint = _getMousePosition.call(this, evt);
-    canvas.addEventListener('mousemove', properties.handleMouseMove, false);
-    canvas.addEventListener('mouseup', properties.handleMouseUp, false);
+    // just supporting click selects at the moment
+    if (properties.mode === wardDrawConstants.MODE_SELECT_SHAPES) {
+        _getFirstSelectableShape.call(this, mouseDownPoint);
+    } else {
+        properties.mouseDownPoint = mouseDownPoint;
+        canvas.addEventListener('mousemove', properties.handleMouseMove, false);
+        canvas.addEventListener('mouseup', properties.handleMouseUp, false);
+    }
 }
 
 function _handleMouseMove(evt) {

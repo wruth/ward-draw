@@ -5,7 +5,7 @@ const WardDraw = require('./ward-draw/ward-draw.js'),
 
 let wardDraw,
     colorRadios,
-    shapeRadios;
+    modeRadios;
 
 
 function handleColorChange() {
@@ -19,9 +19,9 @@ function handleColorChange() {
     }
 }
 
-function handleShapeChange() {
+function handleModeChange() {
 
-    for (let radio of shapeRadios) {
+    for (let radio of modeRadios) {
 
         if (radio.checked) {
             wardDraw.setMode(radio.value);
@@ -41,8 +41,8 @@ function addHandlers() {
         radio.addEventListener('change', handleColorChange);
     }
 
-    for (let radio of shapeRadios) {
-        radio.addEventListener('change', handleShapeChange);
+    for (let radio of modeRadios) {
+        radio.addEventListener('change', handleModeChange);
     }
 
 }
@@ -51,13 +51,13 @@ function init() {
     const canvas = document.getElementById('canvas');
     wardDraw = new WardDraw(canvas, {width: 500, height: 500});
     colorRadios = document.getElementsByName('color');
-    shapeRadios = document.getElementsByName('shape');
+    modeRadios = document.getElementsByName('mode');
     addHandlers();
 
     colorRadios[0].checked = true;
-    shapeRadios[0].checked = true;
+    modeRadios[1].checked = true;
     handleColorChange();
-    handleShapeChange();
+    handleModeChange();
 }
 
 init();

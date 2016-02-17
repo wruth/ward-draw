@@ -25,7 +25,6 @@ function createBackgroundShape(size) {
 
     // first vertical line
     gridPath
-        .beginPath()
         .moveTo(halfSize.width, 0)
         .lineTo(halfSize.width, size.height)
 
@@ -35,6 +34,7 @@ function createBackgroundShape(size) {
 
     gridShape = new Shape(bounds, gridPath, contextPropertiesGrid);
     backgroundShape = new CompositeShape([fillShape, gridShape]);
+    backgroundShape.locked = true;
 
     return backgroundShape;
 }
