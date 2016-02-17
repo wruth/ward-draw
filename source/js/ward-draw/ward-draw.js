@@ -2,9 +2,11 @@
 
 const internal = require('../ward-lib/create-internal.js').createInternal(),
     wardDrawConstants = require('./ward-draw-constants.js'),
+    mouseEventConstants = require('../ward-lib/events/mouse-event-constants.js'),
     Point = require('../ward-lib/graphics/models/point.js'),
     Size = require('../ward-lib/graphics/models/size.js'),
     Rect = require('../ward-lib/graphics/models/rect.js'),
+    getCanvasMouseEventManager = require('../ward-lib/events/get-canvas-mouse-event-manager.js'),
     ContextProperties = require('./models/context-properties.js'),
     DisplayList = require('./display/display-list.js'),
     DisplayListRenderer = require('./display/display-list-renderer.js'),
@@ -26,6 +28,9 @@ const internal = require('../ward-lib/create-internal.js').createInternal(),
 function drawDragRect(ctx, rect) {
     ctx.save();
     ctx.strokeStyle = 'blue';
+
+    // translate for a crisp one pixel stroke
+    ctx.translate(0.5, 0.5);
     ctx.strokeRect(rect.origin.x, rect.origin.y, rect.size.width, rect.size.height);
     ctx.restore();
 }
@@ -69,32 +74,25 @@ function _getFirstSelectableShape(point) {
     const properties = internal(this),
         ctx = properties.ctx,
         listIterator = properties.displayList.getIterator();
+    let selectedShape = null;
 
     for (let element = listIterator.next(); !element.done; element = listIterator.next()) {
         let shape = element.value;
 
         if (!shape.locked && shape.isPointInShape(ctx, point)) {
-            console.log('point in shape!');
+            selectedShape = shape;
             break;
         }
     }
 
+    return selectedShape;
 }
 
-function _getMousePosition(evt) {
-    const canvas = internal(this).canvas,
-        rect = canvas.getBoundingClientRect();
+function _setupHandlers(canvas) {
+    const mouseEventManager = getCanvasMouseEventManager();
 
-    return new Point(evt.clientX - rect.left, evt.clientY - rect.top);
-}
-
-function _setupHandlers() {
-    const properties = internal(this),
-        canvas = properties.canvas;
-
-    canvas.addEventListener('mousedown', _handleMouseDown.bind(this), false);
-    properties.handleMouseMove = _handleMouseMove.bind(this);
-    properties.handleMouseUp = _handleMouseUp.bind(this);
+    mouseEventManager.setCanvas(canvas);
+    mouseEventManager.on(mouseEventConstants.MOUSEDOWN, _handleMouseDown, this);
 }
 
 
@@ -106,35 +104,33 @@ function _setupHandlers() {
 
 function _handleMouseDown(evt) {
     const properties = internal(this),
-        canvas = properties.canvas,
-        mouseDownPoint = _getMousePosition.call(this, evt);
+        mouseEventManager = getCanvasMouseEventManager();
 
     // just supporting click selects at the moment
     if (properties.mode === wardDrawConstants.MODE_SELECT_SHAPES) {
-        _getFirstSelectableShape.call(this, mouseDownPoint);
+        _getFirstSelectableShape.call(this, evt.location);
     } else {
-        properties.mouseDownPoint = mouseDownPoint;
-        canvas.addEventListener('mousemove', properties.handleMouseMove, false);
-        canvas.addEventListener('mouseup', properties.handleMouseUp, false);
+        properties.mouseDownPoint = evt.location;
+        mouseEventManager.on(mouseEventConstants.MOUSEMOVE, _handleMouseMove, this);
+        mouseEventManager.on(mouseEventConstants.MOUSEUP, _handleMouseUp, this);
     }
 }
 
 function _handleMouseMove(evt) {
     const properties = internal(this),
-        mouseMovePoint = _getMousePosition.call(this, evt),
-        size = new Size(mouseMovePoint.x - properties.mouseDownPoint.x, mouseMovePoint.y - properties.mouseDownPoint.y),
+        size = new Size(evt.location.x - properties.mouseDownPoint.x, evt.location.y - properties.mouseDownPoint.y),
         rect = new Rect(properties.mouseDownPoint, size);
 
     properties.dragRect = rect;
     _redraw.call(this);
 }
 
-function _handleMouseUp(evt) {
+function _handleMouseUp() {
     const properties = internal(this),
-        canvas = properties.canvas;
+        mouseEventManager = getCanvasMouseEventManager();
 
-    canvas.removeEventListener('mousemove', properties.handleMouseMove, false);
-    canvas.removeEventListener('mouseup', properties.handleMouseUp, false);
+    mouseEventManager.off(mouseEventConstants.MOUSEMOVE, _handleMouseMove);
+    mouseEventManager.off(mouseEventConstants.MOUSEUP, _handleMouseUp);
 
     _addShape.call(this, properties.dragRect);
 
@@ -156,7 +152,6 @@ class WardDraw {
         canvas.width = size.width;
         canvas.height = size.height;
 
-        properties.canvas = canvas;
         properties.size = size;
         properties.ctx = canvas.getContext('2d');
         properties.contextProperties = new ContextProperties();
@@ -165,7 +160,7 @@ class WardDraw {
         properties.backgroundShape = createBackgroundShape(size);
         properties.mode = wardDrawConstants.MODE_CREATE_RECTANGLES;
 
-        _setupHandlers.call(this);
+        _setupHandlers.call(this, canvas);
 
         // causes the backgroundShape to be added and a _redraw
         this.removeAll();

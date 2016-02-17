@@ -36,6 +36,7 @@ class Shape extends AbstractShape {
 
     draw(ctx) {
         const properties = internal(this),
+            contextProperties = properties.contextProperties,
             path = new Path2D();
 
         ctx.save();
@@ -43,8 +44,15 @@ class Shape extends AbstractShape {
         properties.contextProperties.applyToContext(ctx);
         renderContext(path, properties.pathEncoding);
         properties.path = path;
-        ctx.fill(path);
-        ctx.stroke(path);
+
+        if (contextProperties.has('fillStyle')) {
+            ctx.fill(path);
+        }
+
+        if (contextProperties.has('strokeStyle')) {
+            ctx.stroke(path);
+        }
+
         ctx.restore();
     }
 

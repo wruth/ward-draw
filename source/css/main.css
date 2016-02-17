@@ -7,6 +7,7 @@
 
 #canvas {
     float: left;
+    cursor: crosshair;
 }
 
 #toolbar {

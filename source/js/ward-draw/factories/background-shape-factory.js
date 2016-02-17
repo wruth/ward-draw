@@ -13,10 +13,12 @@ const Shape = require('../display/shape.js'),
 function createBackgroundShape(size) {
     const halfSize = new Size(size.width / 2, size.height / 2),
         bounds = new Rect(new Point(0, 0), size),
-        contextPropertiesFill = new ContextProperties([['fillStyle', 'black']]),
-        contextPropertiesGrid = new ContextProperties([['strokeStyle', 'grey'], ['lineWidth', 2]]),
+        contextPropertiesFill = new ContextProperties([['fillStyle', 'rgb(245,245,245)']]),
+        contextPropertiesGrid = new ContextProperties([['strokeStyle', 'white'], ['lineWidth', 2]]),
+        contextPropertiesBorder = new ContextProperties([['strokeStyle', 'black'], ['lineWidth', 2]]),
         gridPath = new RenderEncoding(),
-        fillShape = createShape(shapeFactoryConstants.TYPE_RECTANGLE, bounds, contextPropertiesFill);
+        fillShape = createShape(shapeFactoryConstants.TYPE_RECTANGLE, bounds, contextPropertiesFill),
+        borderShape = createShape(shapeFactoryConstants.TYPE_RECTANGLE, bounds, contextPropertiesBorder);
 
     let gridShape,
         backgroundShape;
@@ -33,7 +35,7 @@ function createBackgroundShape(size) {
         .lineTo(size.width, halfSize.height);
 
     gridShape = new Shape(bounds, gridPath, contextPropertiesGrid);
-    backgroundShape = new CompositeShape([fillShape, gridShape]);
+    backgroundShape = new CompositeShape([fillShape, gridShape, borderShape]);
     backgroundShape.locked = true;
 
     return backgroundShape;

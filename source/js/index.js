@@ -4,6 +4,7 @@ const WardDraw = require('./ward-draw/ward-draw.js'),
     es6Polyfills = require('./ward-lib/es6-polyfills.js');
 
 let wardDraw,
+    canvas,
     colorRadios,
     modeRadios;
 
@@ -25,6 +26,12 @@ function handleModeChange() {
 
         if (radio.checked) {
             wardDraw.setMode(radio.value);
+
+            if (radio.value === 'selectShapes') {
+                canvas.style.cursor = 'pointer';
+            } else {
+                canvas.style.cursor = 'crosshair';
+            }
             break;
         }
     }
@@ -48,7 +55,7 @@ function addHandlers() {
 }
 
 function init() {
-    const canvas = document.getElementById('canvas');
+    canvas = document.getElementById('canvas');
     wardDraw = new WardDraw(canvas, {width: 500, height: 500});
     colorRadios = document.getElementsByName('color');
     modeRadios = document.getElementsByName('mode');

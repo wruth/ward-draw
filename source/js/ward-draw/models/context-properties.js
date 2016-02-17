@@ -60,6 +60,10 @@ class ContextProperties {
         }
     }
 
+    has(key) {
+        return internal(this).map.has(key);
+    }
+
     applyToContext(ctx) {
         const map = internal(this).map;
 
