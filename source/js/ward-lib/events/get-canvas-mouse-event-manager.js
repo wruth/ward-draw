@@ -20,15 +20,19 @@ function _getMousePosition(evt) {
 }
 
 function _createEvent(evt) {
-    const event = {
-        type: evt.type,
-        altKey: evt.altKey,
-        ctrlKey: evt.ctrlKey,
-        metaKey: evt.metaKey,
-        shiftKey: evt.shiftKey,
-        location: _getMousePosition.call(this, evt)
-    };
+    const properties = internal(this),
+        location = _getMousePosition.call(this, evt),
+        event = {
+            type: evt.type,
+            altKey: evt.altKey,
+            ctrlKey: evt.ctrlKey,
+            metaKey: evt.metaKey,
+            shiftKey: evt.shiftKey,
+            location: location,
+            previousLocation: properties.previousLocation
+        };
 
+    properties.previousLocation = location;
     return event;
 }
 
@@ -91,6 +95,7 @@ class CanvasMouseEventManager extends EventManager {
         properties.handleMouseDown = _handleMouseDown.bind(this);
         properties.handleMouseMove = _handleMouseMove.bind(this);
         properties.handleMouseUp = _handleMouseUp.bind(this);
+        properties.previousLocation = null;
     }
 
     setCanvas(canvas) {

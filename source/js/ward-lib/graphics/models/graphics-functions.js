@@ -86,11 +86,26 @@ function getUnionRect(...rectangles) {
     return unionRect;
 }
 
+/**
+ * Gets the distance between two points, expressed as a rectangular offset (not the
+ * length of a line connecting the two points)
+ *
+ * @param {Point} pointa a reference point
+ * @param {Point} pointb a point to measure an offset to
+ * @return {Size} a measured offset between the two points. For instance, if the second
+ *  point is to the right and below the first point, the width and height values will be
+ *  positive
+ */
+function getOffsetSize(pointa, pointb) {
+    return new Size(pointb.x - pointa.x, pointb.y - pointa.y);
+}
+
 const graphicsFunctions = {
     zeroRect: zeroRect,
     getRect: getRect,
     getOrientedRect: getOrientedRect,
-    getUnionRect: getUnionRect
+    getUnionRect: getUnionRect,
+    getOffsetSize: getOffsetSize
 };
 
 module.exports = graphicsFunctions;

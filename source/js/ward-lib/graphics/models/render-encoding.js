@@ -177,6 +177,10 @@ class RenderEncoding {
         return this;
     }
 
+    clear() {
+        internal(this).splice(0);
+    }
+
     getIterator() {
         return internal(this)[Symbol.iterator]();
     }

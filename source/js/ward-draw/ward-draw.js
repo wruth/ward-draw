@@ -143,7 +143,7 @@ function _doShapeSelection(evt) {
     }
     // no ShapeEditor so create one
     else if (selectedShape) {
-        const shapeEditor = new ShapeEditor([selectedShape]);
+        const shapeEditor = new ShapeEditor([selectedShape], _redraw.bind(this), properties.ctx);
         displayList.addShape(shapeEditor);
         isDisplayChanged = true;
     }
@@ -201,7 +201,10 @@ function _handleMouseUp() {
     _redraw.call(this);
 }
 
-
+/**
+ * `WardDraw`
+ * @class
+ */
 class WardDraw {
 
     /**
