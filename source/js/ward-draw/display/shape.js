@@ -34,9 +34,9 @@ class Shape extends AbstractShape {
         return isInPath;
     }
 
-    draw(ctx) {
+    draw(ctx, pContextProperties) {
         const properties = internal(this),
-            contextProperties = properties.contextProperties,
+            contextProperties = pContextProperties || properties.contextProperties,
             path = new Path2D();
 
         ctx.save();

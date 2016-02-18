@@ -11,7 +11,7 @@ class DisplayListRenderer {
 
     renderList(displayList) {
         const ctx = internal(this).ctx,
-            listIterator = displayList.getIterator();
+            listIterator = displayList.getRenderIterator();
 
         for (let element = listIterator.next(); !element.done; element = listIterator.next()) {
             ctx.save();

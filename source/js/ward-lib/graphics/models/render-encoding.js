@@ -19,7 +19,8 @@ function removeTopMatchingOperation(encoding, operation) {
 
     if (operation === lastOperation) {
         args = encoding.pop();
-    } else {
+    }
+    else {
         encoding.push(lastOperation);
     }
 
@@ -130,7 +131,8 @@ class RenderEncoding {
 
         if (previousArgs) {
             args = [previousArgs[0] + angle];
-        } else {
+        }
+        else {
             args = [angle];
         }
 
@@ -147,7 +149,8 @@ class RenderEncoding {
 
         if (previousArgs) {
             args = [previousArgs[0] * x, previousArgs[1] * y];
-        } else {
+        }
+        else {
             args = [x, y];
         }
 
@@ -164,7 +167,8 @@ class RenderEncoding {
 
         if (previousArgs) {
             args = [previousArgs[0] + x, previousArgs[1] + y];
-        } else {
+        }
+        else {
             args = [x, y];
         }
 

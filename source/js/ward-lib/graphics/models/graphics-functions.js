@@ -4,6 +4,8 @@ const Rect = require('./rect.js'),
     Size = require('./size.js'),
     Point = require('./point.js');
 
+const zeroRect = getRect(0, 0, 0, 0);
+
 /**
  * Convenience factory function for a `Rect`.
  *
@@ -64,6 +66,11 @@ function getUnionRect(...rectangles) {
         origin,
         size;
 
+    // return a zero rect if there's no rectangles
+    if (!rectangles || rectangles.length === 0) {
+        return zeroRect;
+    }
+
     for (let rect of rectangles) {
  //   for (let i = 0, rect = rectangles[i]; i < rectangles.length; i++, rect = rectangles[i]) {
         minX = Math.min(minX, rect.origin.x);
@@ -80,6 +87,7 @@ function getUnionRect(...rectangles) {
 }
 
 const graphicsFunctions = {
+    zeroRect: zeroRect,
     getRect: getRect,
     getOrientedRect: getOrientedRect,
     getUnionRect: getUnionRect

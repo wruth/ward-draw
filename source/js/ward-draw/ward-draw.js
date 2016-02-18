@@ -3,13 +3,13 @@
 const internal = require('../ward-lib/create-internal.js').createInternal(),
     wardDrawConstants = require('./ward-draw-constants.js'),
     mouseEventConstants = require('../ward-lib/events/mouse-event-constants.js'),
-    Point = require('../ward-lib/graphics/models/point.js'),
     Size = require('../ward-lib/graphics/models/size.js'),
     Rect = require('../ward-lib/graphics/models/rect.js'),
     getCanvasMouseEventManager = require('../ward-lib/events/get-canvas-mouse-event-manager.js'),
     ContextProperties = require('./models/context-properties.js'),
     DisplayList = require('./display/display-list.js'),
     DisplayListRenderer = require('./display/display-list-renderer.js'),
+    ShapeEditor = require('./display/shape-editor.js'),
     createShape = require('./factories/shape-factory.js'),
     shapeFactoryConstants = require('./factories/shape-factory-constants.js'),
     createBackgroundShape = require('./factories/background-shape-factory.js'),
@@ -64,7 +64,8 @@ function _addShape(bounds) {
     try {
         let shape = createShape(modeToShapeMap.get(properties.mode), bounds, properties.contextProperties.clone());
         properties.displayList.addShape(shape);
-    } catch (err) {
+    }
+    catch (err) {
         console.log(err.message);
     }
 
@@ -73,7 +74,7 @@ function _addShape(bounds) {
 function _getFirstSelectableShape(point) {
     const properties = internal(this),
         ctx = properties.ctx,
-        listIterator = properties.displayList.getIterator();
+        listIterator = properties.displayList.getSelectionIterator();
     let selectedShape = null;
 
     for (let element = listIterator.next(); !element.done; element = listIterator.next()) {
@@ -95,6 +96,61 @@ function _setupHandlers(canvas) {
     mouseEventManager.on(mouseEventConstants.MOUSEDOWN, _handleMouseDown, this);
 }
 
+function _doShapeSelection(evt) {
+    const properties = internal(this),
+        displayList = properties.displayList,
+
+        // this might be null, no selected shape...
+        selectedShape = _getFirstSelectableShape.call(this, evt.location),
+        topShape = displayList.getTopShape();
+
+    let isDisplayChanged = false;
+
+    // there is an existing ShapeEditor
+    if (topShape instanceof ShapeEditor) {
+        const shapeEditor = topShape;
+
+        // if there's no selected shape, remove all the shapes from the shapeEditor
+        if (!selectedShape) {
+            shapeEditor.removeAllShapes();
+        }
+        // if the shift key is down, going to either add or remove the selectedShape from the shapeEditor
+        else if (evt.shiftKey) {
+
+            // if the shapeEditor already has the shape, remove it from the editor
+            if (shapeEditor.hasShape(selectedShape)) {
+                shapeEditor.removeShape(selectedShape);
+            }
+            // if the shapeEditor does not have the shape, add it to the editor
+            else {
+                shapeEditor.addShape(selectedShape);
+            }
+            isDisplayChanged = true;
+        }
+        // shift key not down, so status quo if shape already in shapeEditor, otherwise replace all shapes
+        else if (!shapeEditor.hasShape(selectedShape)) {
+            shapeEditor.removeAllShapes();
+            shapeEditor.addShape(selectedShape);
+            isDisplayChanged = true;
+        }
+
+        // if the shapeEditor is empty need to remove it from the display list so it can be gc'd
+        if (shapeEditor.isEmpty()) {
+            displayList.removeTopShape();
+            isDisplayChanged = true;
+        }
+
+    }
+    // no ShapeEditor so create one
+    else if (selectedShape) {
+        const shapeEditor = new ShapeEditor([selectedShape]);
+        displayList.addShape(shapeEditor);
+        isDisplayChanged = true;
+    }
+
+    return isDisplayChanged;
+}
+
 
 //----------------------------------------------------------------------------------------------------------------------
 //
@@ -108,8 +164,14 @@ function _handleMouseDown(evt) {
 
     // just supporting click selects at the moment
     if (properties.mode === wardDrawConstants.MODE_SELECT_SHAPES) {
-        _getFirstSelectableShape.call(this, evt.location);
-    } else {
+
+        // if the shape selection resulted in some display change, redraw
+        if (_doShapeSelection.call(this, evt)) {
+            _redraw.call(this);
+        }
+
+    }
+    else {
         properties.mouseDownPoint = evt.location;
         mouseEventManager.on(mouseEventConstants.MOUSEMOVE, _handleMouseMove, this);
         mouseEventManager.on(mouseEventConstants.MOUSEUP, _handleMouseUp, this);
@@ -176,7 +238,7 @@ class WardDraw {
 
     removeAll() {
         const properties = internal(this);
-        properties.displayList.removeAll();
+        properties.displayList.removeAllShapes();
         properties.displayList.addShape(properties.backgroundShape);
         _redraw.call(this);
     }

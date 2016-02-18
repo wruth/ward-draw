@@ -29,7 +29,8 @@ function handleModeChange() {
 
             if (radio.value === 'selectShapes') {
                 canvas.style.cursor = 'pointer';
-            } else {
+            }
+            else {
                 canvas.style.cursor = 'crosshair';
             }
             break;

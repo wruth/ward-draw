@@ -16,13 +16,41 @@ class DisplayList {
         return this;
     }
 
-    removeAll() {
+    getTopShape() {
+        const list = internal(this);
+        let top = null;
+
+        if (list.length) {
+            top = list[list.length - 1];
+        }
+
+        return top;
+    }
+
+    removeTopShape() {
+        return internal(this).pop();
+    }
+
+    removeAllShapes() {
         internal(this).splice(0);
         return this;
     }
 
-    getIterator() {
+    /**
+     * Rendering is from bottom to top
+     */
+    getRenderIterator() {
         return internal(this)[Symbol.iterator]();
+    }
+
+    /**
+     * Selection is from top to bottom
+     */
+    getSelectionIterator() {
+        const list = internal(this),
+            // copy the internal array since reverse() operates in place
+            reversed = list.slice(0).reverse();
+        return reversed[Symbol.iterator]();
     }
 
 }

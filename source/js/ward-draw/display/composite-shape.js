@@ -34,12 +34,12 @@ class CompositeShape extends AbstractShape {
         return isInShape;
     }
 
-    draw(ctx) {
+    draw(ctx, pContextProperties) {
         const properties = internal(this);
         ctx.save();
 
         for (let shape of properties.shapes) {
-            shape.draw(ctx);
+            shape.draw(ctx, pContextProperties);
         }
 
         ctx.restore();

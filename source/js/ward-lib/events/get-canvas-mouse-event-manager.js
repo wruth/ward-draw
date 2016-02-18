@@ -19,6 +19,19 @@ function _getMousePosition(evt) {
     return new Point(evt.clientX - rect.left, evt.clientY - rect.top);
 }
 
+function _createEvent(evt) {
+    const event = {
+        type: evt.type,
+        altKey: evt.altKey,
+        ctrlKey: evt.ctrlKey,
+        metaKey: evt.metaKey,
+        shiftKey: evt.shiftKey,
+        location: _getMousePosition.call(this, evt)
+    };
+
+    return event;
+}
+
 function _updateCanvasListeners() {
     const properties = internal(this),
         canvas = properties.canvas;
@@ -48,31 +61,17 @@ function _checkCanvasListener(canvas, type, handler, properties) {
 }
 
 function _handleMouseDown(evt) {
-    const eventObj = {
-        type: constants.MOUSEDOWN,
-        location: _getMousePosition.call(this, evt)
-    };
-
-    this.trigger(constants.MOUSEDOWN, eventObj);
+    this.trigger(constants.MOUSEDOWN, _createEvent.call(this, evt));
 }
 
 function _handleMouseMove(evt) {
-    const eventObj = {
-        type: constants.MOUSEMOVE,
-        location: _getMousePosition.call(this, evt)
-    };
-
-    this.trigger(constants.MOUSEMOVE, eventObj);
+    this.trigger(constants.MOUSEMOVE, _createEvent.call(this, evt));
 }
 
 function _handleMouseUp(evt) {
-    const eventObj = {
-        type: constants.MOUSEUP,
-        location: _getMousePosition.call(this, evt)
-    };
-
-    this.trigger(constants.MOUSEUP, eventObj);
+    this.trigger(constants.MOUSEUP, _createEvent.call(this, evt));
 }
+
 
 /**
  * `CanvasMouseEventManager`

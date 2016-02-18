@@ -10,7 +10,8 @@ function render(ctx, pathEncoding) {
         if (typeof item.value === 'string') {
             ctx[item.value].apply(ctx, args);
             args = null;
-        } else if (item.value instanceof Array) {
+        }
+        else if (item.value instanceof Array) {
             args = item.value;
         }
     }

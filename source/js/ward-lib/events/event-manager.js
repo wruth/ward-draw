@@ -15,7 +15,8 @@ class EventManager {
         if (!eventTypes.has(name)) {
             eventListeners = new Map();
             eventTypes.set(name, eventListeners);
-        } else {
+        }
+        else {
             eventListeners = eventTypes.get(name);
         }
 
@@ -30,7 +31,8 @@ class EventManager {
             // if there's no callback specified, remove all listeners for this type
             if (!callback) {
                 eventTypes.delete(name);
-            } else {
+            }
+            else {
                 const eventListeners = eventTypes.get(name);
                 eventListeners.delete(callback);
             }
