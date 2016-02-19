@@ -35,10 +35,12 @@ class RectTransformContext {
     translate(x, y) {
         const properties = internal(this),
             matrix = properties.matrix,
-            rect = properties.rect;
-        matrix.translate(x, y);
+            rect = properties.rect,
+            txMatrix = matrix.translate(x, y);
+
+        properties.matrix = txMatrix;
         properties.txRect = graphicsFunctions.getRect(
-            rect.origin.x + matrix.e, rect.origin.y + matrix.f, rect.size.with, rect.size.height);
+            rect.origin.x + txMatrix.e, rect.origin.y + txMatrix.f, rect.size.width, rect.size.height);
     }
 
     get rect() {

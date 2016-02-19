@@ -12,6 +12,7 @@ class Shape extends AbstractShape {
         super(propertiesWrapper);
         const properties = internal(this, propertiesWrapper.properties);
         properties.bounds = bounds;
+        properties.txBounds = bounds;
         properties.pathEncoding = pathEncoding;
         properties.transformEncoding = new RenderEncoding();
         properties.contextProperties = contextProperties;

@@ -18,12 +18,12 @@ class AbstractShape {
         const properties = internal(this),
             rectContext = new RectTrasformContext(properties.bounds);
         renderContext(properties.transformEncoding, transformEncoding);
-        renderContext(rectContext, transformEncoding);
-        properties.bounds = rectContext.rect;
+        renderContext(rectContext, properties.transformEncoding);
+        properties.txBounds = rectContext.rect;
     }
 
     get bounds() {
-        return internal(this).bounds;
+        return internal(this).txBounds;
     }
 
     get locked() {
