@@ -100,12 +100,25 @@ function getOffsetSize(pointa, pointb) {
     return new Size(pointb.x - pointa.x, pointb.y - pointa.y);
 }
 
+/**
+ * Given a point, determine if it lies within the boundaries of a rectangle or not.
+ *
+ * @param {Point} a point to evaluate
+ * @param {Rect} a rectangle to evaluate the point against
+ * @return {Boolean} `true` if the point lies within the rect, `false` otherwise
+ */
+function isPointInRect(point, rect) {
+    return (point.x >= rect.origin.x && point.x <= rect.origin.x + rect.size.width
+        && point.y >= rect.origin.y && point.y <= rect.origin.y + rect.size.height);
+}
+
 const graphicsFunctions = {
     zeroRect: zeroRect,
     getRect: getRect,
     getOrientedRect: getOrientedRect,
     getUnionRect: getUnionRect,
-    getOffsetSize: getOffsetSize
+    getOffsetSize: getOffsetSize,
+    isPointInRect: isPointInRect
 };
 
 module.exports = graphicsFunctions;

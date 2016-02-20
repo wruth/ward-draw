@@ -53,12 +53,14 @@ function _checkCanvasListener(canvas, type, handler, properties) {
 
     // if there are listeners for a type and the manager is not currently listening, start manager listening
     if (this.numListenersForType(type) && !properties[type]) {
+        console.log(`add ${type} listener`);
         canvas.addEventListener(type, handler, false);
         properties[type] = true;
     }
 
     // if there are not listeners for a type and the manager is currently listening, stop manager listening
     if (!this.numListenersForType(type) && properties[type]) {
+        console.log(`remove ${type} listener`);
         canvas.removeEventListener(type, handler, false);
         properties[type] = false;
     }
@@ -78,10 +80,10 @@ function _handleMouseUp(evt) {
 
 
 /**
- * `CanvasMouseEventManager`
+ * `CanvasEventManager`
  * @class
  */
-class CanvasMouseEventManager extends EventManager {
+class CanvasEventManager extends EventManager {
 
     constructor() {
         super();
@@ -136,7 +138,7 @@ function getInstance() {
         return instance;
     }
 
-    instance = new CanvasMouseEventManager(canvas);
+    instance = new CanvasEventManager(canvas);
 
     return instance;
 }

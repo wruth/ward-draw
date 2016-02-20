@@ -2,7 +2,7 @@
 
 const internal = require('../../ward-lib/create-internal.js').createInternal(),
     mouseEventConstants = require('../../ward-lib/events/mouse-event-constants.js'),
-    getCanvasMouseEventManager = require('../../ward-lib/events/get-canvas-mouse-event-manager.js'),
+    getCanvasEventManager = require('../../ward-lib/events/get-canvas-event-manager.js'),
     graphicsFunctions = require('../../ward-lib/graphics/models/graphics-functions.js'),
     RenderEncoding = require('../../ward-lib/graphics/models/render-encoding.js'),
     Size = require('../../ward-lib/graphics/models/size.js'),
@@ -11,9 +11,8 @@ const internal = require('../../ward-lib/create-internal.js').createInternal(),
     renderContext = require('../../ward-lib/graphics/renderers/context-renderer.js'),
     displayFunctions = require('./display-functions.js'),
     AbstractShape = require('./abstract-shape.js'),
-    ContextProperties = require('../models/context-properties.js'),
-    shapeFactoryConstants = require('../factories/shape-factory-constants.js'),
-    createShape = require('../factories/shape-factory.js');
+    TransformHandle = require('./transform-handle.js'),
+    ContextProperties = require('../models/context-properties.js');
 
 //----------------------------------------------------------------------------------------------------------------------
 //
@@ -21,15 +20,11 @@ const internal = require('../../ward-lib/create-internal.js').createInternal(),
 //
 //----------------------------------------------------------------------------------------------------------------------
 
-function _createTxHandles() {
+function _getTxRects() {
     const properties = internal(this),
         bounds = properties.bounds,
         boundsOrigin = bounds.origin,
         boundsSize = bounds.size,
-        contextProperties = new ContextProperties([
-            ['strokeStyle', 'blue'],
-            ['lineWidth', 1],
-            ['fillStyle', 'white']]),
         handleWH = 5,
         halfHandleWH = handleWH / 2,
         handleSize = new Size(handleWH, handleWH),
@@ -41,18 +36,54 @@ function _createTxHandles() {
         bPoint = new Point(boundsOrigin.x + boundsSize.width / 2 - halfHandleWH, boundsOrigin.y + boundsSize.height - halfHandleWH),
         blPoint = new Point(boundsOrigin.x - halfHandleWH, boundsOrigin.y + boundsSize.height - halfHandleWH),
         lPoint = new Point(boundsOrigin.x - halfHandleWH, boundsOrigin.y + boundsSize.height / 2 - halfHandleWH),
-        txHandels = new Map([
-            ['tl', createShape(shapeFactoryConstants.TYPE_RECTANGLE, new Rect(tlPoint, handleSize), contextProperties)],
-            ['t', createShape(shapeFactoryConstants.TYPE_RECTANGLE, new Rect(tPoint, handleSize), contextProperties)],
-            ['tr', createShape(shapeFactoryConstants.TYPE_RECTANGLE, new Rect(trPoint, handleSize), contextProperties)],
-            ['r', createShape(shapeFactoryConstants.TYPE_RECTANGLE, new Rect(rPoint, handleSize), contextProperties)],
-            ['br', createShape(shapeFactoryConstants.TYPE_RECTANGLE, new Rect(brPoint, handleSize), contextProperties)],
-            ['b', createShape(shapeFactoryConstants.TYPE_RECTANGLE, new Rect(bPoint, handleSize), contextProperties)],
-            ['bl', createShape(shapeFactoryConstants.TYPE_RECTANGLE, new Rect(blPoint, handleSize), contextProperties)],
-            ['l', createShape(shapeFactoryConstants.TYPE_RECTANGLE, new Rect(lPoint, handleSize), contextProperties)]
+        txRects = new Map([
+            ['tl', new Rect(tlPoint, handleSize)],
+            ['t', new Rect(tPoint, handleSize)],
+            ['tr', new Rect(trPoint, handleSize)],
+            ['r', new Rect(rPoint, handleSize)],
+            ['br', new Rect(brPoint, handleSize)],
+            ['b', new Rect(bPoint, handleSize)],
+            ['bl', new Rect(blPoint, handleSize)],
+            ['l', new Rect(lPoint, handleSize)]
         ]);
 
+    return txRects;
+}
+
+function _createTxHandles() {
+    const properties = internal(this),
+        txRects = _getTxRects.call(this),
+        contextProperties = new ContextProperties([
+            ['strokeStyle', 'blue'],
+            ['lineWidth', 1],
+            ['fillStyle', 'white']]),
+        txHandels = new Map([
+            ['tl', new TransformHandle(txRects.get('tl'), contextProperties, 'tl')],
+            ['t', new TransformHandle(txRects.get('t'), contextProperties, 't')],
+            ['tr', new TransformHandle(txRects.get('tr'), contextProperties, 'tr')],
+            ['r', new TransformHandle(txRects.get('r'), contextProperties, 'r')],
+            ['br', new TransformHandle(txRects.get('br'), contextProperties, 'br')],
+            ['b', new TransformHandle(txRects.get('b'), contextProperties, 'b')],
+            ['bl', new TransformHandle(txRects.get('bl'), contextProperties, 'bl')],
+            ['l', new TransformHandle(txRects.get('l'), contextProperties, 'l')]
+        ]);
+
+    _destroyTxHandles.call(this);
     properties.txHandels = txHandels;
+}
+
+function _destroyTxHandles() {
+    const properties = internal(this),
+        txHandels = properties.txHandels;
+
+    if (txHandels) {
+
+        for (let entry of txHandels) {
+            entry[1].destroy();
+        }
+    }
+
+    delete properties.txHandels;
 }
 
 function _hasShapeForPoint(point) {
@@ -72,15 +103,15 @@ function _hasShapeForPoint(point) {
 
 function _setupMouseHandlers() {
     const properties = internal(this),
-        mouseEventManager = getCanvasMouseEventManager();
+        eventManager = getCanvasEventManager();
 
     properties.isMouseUp = false;
-    mouseEventManager.on(mouseEventConstants.MOUSEMOVE, _handleMouseMove, this);
-    mouseEventManager.on(mouseEventConstants.MOUSEUP, _handleMouseUp, this);
+    eventManager.on(mouseEventConstants.MOUSEMOVE, _handleMouseMove, this);
+    eventManager.on(mouseEventConstants.MOUSEUP, _handleMouseUp, this);
 }
 
 function _removeMouseDownListener() {
-    getCanvasMouseEventManager().off(mouseEventConstants.MOUSEDOWN, _handleMouseDown);
+    getCanvasEventManager().off(mouseEventConstants.MOUSEDOWN, _handleMouseDown);
 }
 
 function _handleMouseDown(evt) {
@@ -109,11 +140,11 @@ function _handleMouseUp() {
         shapes = properties.shapes,
         transformEncoding = properties.transformEncoding,
         redrawCallback = properties.redrawCallback,
-        mouseEventManager = getCanvasMouseEventManager();
+        eventManager = getCanvasEventManager();
 
-    mouseEventManager.off(mouseEventConstants.MOUSEMOVE, _handleMouseMove);
-    mouseEventManager.off(mouseEventConstants.MOUSEUP, _handleMouseUp);
-    mouseEventManager.on(mouseEventConstants.MOUSEDOWN, _handleMouseDown, this);
+    eventManager.off(mouseEventConstants.MOUSEMOVE, _handleMouseMove);
+    eventManager.off(mouseEventConstants.MOUSEUP, _handleMouseUp);
+    eventManager.on(mouseEventConstants.MOUSEDOWN, _handleMouseDown, this);
 
     for (let shape of shapes) {
         shape.applyTransformEncoding(transformEncoding);
@@ -178,7 +209,8 @@ class ShapeEditor extends AbstractShape {
         properties.shapes.clear();
         properties.transformEncoding.clear();
         properties.bounds = graphicsFunctions.zeroRect;
-        delete properties.txHandels;
+
+        _destroyTxHandles.call(this);
         _removeMouseDownListener();
     }
 

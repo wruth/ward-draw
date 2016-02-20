@@ -26,13 +26,6 @@ function handleModeChange() {
 
         if (radio.checked) {
             wardDraw.setMode(radio.value);
-
-            if (radio.value === 'selectShapes') {
-                canvas.style.cursor = 'pointer';
-            }
-            else {
-                canvas.style.cursor = 'crosshair';
-            }
             break;
         }
     }
@@ -52,7 +45,6 @@ function addHandlers() {
     for (let radio of modeRadios) {
         radio.addEventListener('change', handleModeChange);
     }
-
 }
 
 function init() {
