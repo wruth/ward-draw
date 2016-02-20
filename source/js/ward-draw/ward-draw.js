@@ -58,16 +58,33 @@ function _redraw() {
     }
 }
 
+function _addShapeToShapeEditor(shape) {
+    const properties = internal(this);
+    properties.displayList.addShape(new ShapeEditor([shape], _redraw.bind(this), properties.ctx));
+}
+
+function _destroyShapeEditor() {
+    const properties = internal(this),
+        displayList = properties.displayList;
+
+    if (displayList.getTopShape() instanceof ShapeEditor) {
+        let shapeEditor = displayList.removeTopShape();
+        shapeEditor.removeAllShapes();
+    }
+}
+
 function _addShape(bounds) {
     const properties = internal(this);
 
-    try {
+    _destroyShapeEditor.call(this);
+//    try {
         let shape = createShape(modeToShapeMap.get(properties.mode), bounds, properties.contextProperties.clone());
         properties.displayList.addShape(shape);
-    }
-    catch (err) {
-        console.log(err.message);
-    }
+        _addShapeToShapeEditor.call(this, shape);
+//    }
+//    catch (err) {
+//        console.log(err.message);
+//    }
 
 }
 
@@ -143,8 +160,8 @@ function _doShapeSelection(evt) {
     }
     // no ShapeEditor so create one
     else if (selectedShape) {
-        const shapeEditor = new ShapeEditor([selectedShape], _redraw.bind(this), properties.ctx);
-        displayList.addShape(shapeEditor);
+        _addShapeToShapeEditor.call(this, selectedShape);
+
         isDisplayChanged = true;
     }
 
@@ -194,7 +211,9 @@ function _handleMouseUp() {
     mouseEventManager.off(mouseEventConstants.MOUSEMOVE, _handleMouseMove);
     mouseEventManager.off(mouseEventConstants.MOUSEUP, _handleMouseUp);
 
-    _addShape.call(this, properties.dragRect);
+    if (properties.dragRect) {
+        _addShape.call(this, properties.dragRect);
+    }
 
     delete properties.mouseDownPoint;
     delete properties.dragRect;

@@ -51,7 +51,7 @@ class CompositeShape extends AbstractShape {
      *
      * @return {Array} an array of any composed Shapes
      */
-    removeAll() {
+    removeAllShapes() {
         const properties = internal(this),
             shapes = properties.shapes;
         delete properties.shapes;
